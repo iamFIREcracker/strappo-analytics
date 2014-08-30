@@ -69,12 +69,6 @@ def bootstrap():
     print(cyan('Creating venv...'))
     vcreate()
 
-    print(cyan('Initialize database...'))
-    dbupdate()
-
-    print(cyan('Recreate i18n strings...'))
-    i18nupdate()
-
     restart()
 
 @task
@@ -88,12 +82,6 @@ def update():
 
     print(cyan('Updating venv...'))
     vupdate()
-
-    print(cyan('Updating database...'))
-    dbupdate()
-
-    print(cyan('Recreate i18n strings...'))
-    i18nupdate()
 
     restart()
 
