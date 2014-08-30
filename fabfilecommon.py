@@ -18,13 +18,6 @@ from fabric.colors import red
 from fabric.decorators import task
 
 
-env.appname = 'getstrappo'
-env.appport = '8000'
-env.servername = 'http://getstrappo.com'
-env.repo_url = 'ssh://hg@bitbucket.org/iamFIREcracker/getstrappo'
-env.site_url = 'http://localhost:8080/hello'
-
-
 def _happy():
     print(green('\nLooks good from here!\n'))
 

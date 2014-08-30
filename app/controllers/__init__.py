@@ -1,67 +1,30 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from collections import namedtuple
+
+import json
+import urllib2
+
 import web
 
-from app.repositories.users import UsersRepository
-from app.weblib.controllers import AbstractCookieAuthorizableController
-from app.weblib.controllers import AbstractParamAuthorizableController
-from app.weblib.utils import jsonify
 
+class User(object):
+    def __init__(self, data):
+        self.id = data['id'] if data else ''
+        self.name = data['name'] if data else ''
 
-class CookieAuthorizableController(AbstractCookieAuthorizableController):
-    def get_user(self, token):
-        return UsersRepository.authorized_by(token)
+class Trace(object):
+    def __init__(self, data):
+        self.id = data['id']
+        self.created = data['date']
+        self.created_day = data['date'] # XXX
+        self.user = User(data['user'])
 
-
-class ParamAuthorizableController(AbstractParamAuthorizableController):
-    def get_user(self, token):
-        return UsersRepository.authorized_by(token)
-
-
-class InfoController(object):
+class IndexController():
     def GET(self):
-        return jsonify({
-            'min_version':'0.0.1',
-            'served_regions':[
-                {
-                    'name': 'Viareggio',
-                    'center': {
-                        'lat': 43.873676,
-                        'lon': 10.248534
-                    },
-                    'radius': 10,
-                    'hours': [
-                         {
-                             'day_of_week': 0,
-                             'from': 16,
-                             'to': 24
-                         }, {
-                             'day_of_week': 1,
-                             'from': 18,
-                             'to': 24
-                         }, {
-                             'day_of_week': 2,
-                             'from': 18,
-                             'to': 24
-                         }, {
-                             'day_of_week': 3,
-                             'from': 18,
-                             'to': 24
-                         }, {
-                             'day_of_week': 4,
-                             'from': 18,
-                             'to': 24
-                         }, {
-                             'day_of_week': 5,
-                             'from': 18,
-                             'to': 2
-                         }, {
-                             'day_of_week': 6,
-                             'from': 18,
-                             'to': 2
-                         }
-                    ]
-                }
-            ]
-        })
+        url = "http://%s/1/traces" % web.config.API_HOST
+        data = json.load(urllib2.urlopen(url))
+        traces = [Trace(t) for t in data['traces']]
+        return web.ctx.render.traces(traces=traces)
+

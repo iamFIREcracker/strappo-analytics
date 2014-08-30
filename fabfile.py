@@ -21,9 +21,9 @@ from fabric.decorators import task
 from fabfilecommon import *
 
 
-env.appname = 'strappo-api'
-env.appport = '8000'
-env.repo_url = 'ssh://hg@bitbucket.org/iamFIREcracker/strappo-api'
+env.appname = 'strappo-analytics'
+env.appport = '8002'
+env.repo_url = 'ssh://hg@bitbucket.org/iamFIREcracker/strappo-analytics'
 
 @task
 def dev():
@@ -36,10 +36,8 @@ def dev():
     env.venv_path = '/srv/www/%s/venv' % env.appname
     env.repo_branch = 'develop'
 
-    env.config = 'dev_config.py'
-
-    env.servername = 'api.dev.getstrappo.com'
-    env.site_url = 'http://%s/1/info' % env.hosts[0]
+    env.servername = 'analytics.dev.getstrappo.com'
+    env.site_url = 'http://%s' % env.hosts[0]
 
 @task
 def prod():
@@ -52,10 +50,8 @@ def prod():
     env.venv_path = '/srv/www/%s/venv' % env.appname
     env.repo_branch = 'production'
 
-    env.config = 'prod_config.py'
-
-    env.servername = 'api.getstrappo.com'
-    env.site_url = 'http://%s/1/info' % env.hosts[0]
+    env.servername = 'analytics.getstrappo.com'
+    env.site_url = 'http://%s' % env.hosts[0]
 
 
 @task
@@ -66,9 +62,6 @@ def bootstrap():
 
     print(cyan("Cloning repo..."))
     rclone()
-
-    print(cyan("Updating config..."))
-    cupload()
 
     print(cyan("Applying puppet manifest..."))
     papply()
@@ -89,9 +82,6 @@ def update():
     ''' Update everything related to the app. '''
     print(cyan("Updating repo..."))
     rupdate()
-
-    print(cyan("Updating config..."))
-    cupload()
 
     print(cyan("Applying puppet manifest..."))
     papply()
