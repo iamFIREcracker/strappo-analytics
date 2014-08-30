@@ -10,17 +10,14 @@ import urllib2
 import web
 
 
-class User(object):
-    def __init__(self, data):
-        self.id = data['id'] if data else ''
-        self.name = data['name'] if data else ''
-
 class Trace(object):
     def __init__(self, data):
         self.id = data['id']
+        self.user_id = data['user_id']
+        self.user_name = data['user_name']
         self.created = data['date']
-        self.created_day = data['date'] # XXX
-        self.user = User(data['user'])
+        self.created_day = data['date'].split('T')[0]
+        self.message = data['message']
 
 class IndexController():
     TRACES_URL = "http://%(host)s/1/traces?limit=%(limit)s&offset=%(offset)s"
