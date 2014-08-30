@@ -19,9 +19,13 @@ class Trace(object):
         self.created_day = data['date'].split('T')[0]
         self.message = data['message']
 
+
 class IndexController():
     TRACES_URL = "http://%(host)s/1/traces?limit=%(limit)s&offset=%(offset)s"
     def GET(self):
+        if not web.cookies().get('authorized'):
+            return web.ctx.render.login()
+
         data = web.input(limit=1000, offset=0)
         url = self.TRACES_URL % dict(host=web.config.API_HOST,
                                      limit=data.limit,
@@ -30,3 +34,10 @@ class IndexController():
         traces = [Trace(t) for t in data['traces']]
         return web.ctx.render.traces(traces=traces)
 
+    def POST(self):
+        data = web.input(secret='')
+        if data.secret != web.config.SECRET:
+            raise web.unauthorized()
+
+        web.setcookie('authorized', 1, 3600)
+        raise web.seeother("/")

@@ -36,6 +36,8 @@ def dev():
     env.venv_path = '/srv/www/%s/venv' % env.appname
     env.repo_branch = 'develop'
 
+    env.config = 'dev_config.py'
+
     env.servername = 'analytics.dev.getstrappo.com'
     env.site_url = 'http://%s?limit=1' % env.hosts[0]
 
@@ -50,6 +52,8 @@ def prod():
     env.venv_path = '/srv/www/%s/venv' % env.appname
     env.repo_branch = 'production'
 
+    env.config = 'prod_config.py'
+
     env.servername = 'analytics.getstrappo.com'
     env.site_url = 'http://%s?limit1' % env.hosts[0]
 
@@ -62,6 +66,9 @@ def bootstrap():
 
     print(cyan("Cloning repo..."))
     rclone()
+
+    print(cyan("Updating config..."))
+    cupload()
 
     print(cyan("Applying puppet manifest..."))
     papply()
@@ -76,6 +83,9 @@ def update():
     ''' Update everything related to the app. '''
     print(cyan("Updating repo..."))
     rupdate()
+
+    print(cyan("Updating config..."))
+    cupload()
 
     print(cyan("Applying puppet manifest..."))
     papply()

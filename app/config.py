@@ -12,6 +12,8 @@ LOG_FORMAT = '[%(process)d] %(levelname)s %(message)s [in %(pathname)s:%(lineno)
 
 API_HOST = "127.0.0.1:8000"
 
+SECRET = "ohmygodlookatthetree"
+
 
 try:
     from local_config import *

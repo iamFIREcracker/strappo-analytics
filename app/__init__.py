@@ -18,6 +18,8 @@ web.config.LOG_FORMAT = config.LOG_FORMAT
 
 web.config.API_HOST = config.API_HOST
 
+web.config.SECRET = config.SECRET
+
 
 
 def app_factory():
