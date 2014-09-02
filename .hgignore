@@ -9,5 +9,5 @@ build/*
 cscope*
 dist/*
 local_config.py
-strappo-api.egg*
+strappo-analytics.egg*
 tags

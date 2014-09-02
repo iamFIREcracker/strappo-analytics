@@ -1,67 +1,43 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from collections import namedtuple
+
+import json
+import urllib
+import urllib2
+
 import web
 
-from app.repositories.users import UsersRepository
-from app.weblib.controllers import AbstractCookieAuthorizableController
-from app.weblib.controllers import AbstractParamAuthorizableController
-from app.weblib.utils import jsonify
+
+class Trace(object):
+    def __init__(self, data):
+        self.id = data['id']
+        self.user_id = data['user_id']
+        self.user_name = data['user_name']
+        self.created = data['date']
+        self.created_day = data['date'].split('T')[0]
+        self.message = data['message']
 
 
-class CookieAuthorizableController(AbstractCookieAuthorizableController):
-    def get_user(self, token):
-        return UsersRepository.authorized_by(token)
-
-
-class ParamAuthorizableController(AbstractParamAuthorizableController):
-    def get_user(self, token):
-        return UsersRepository.authorized_by(token)
-
-
-class InfoController(object):
+class IndexController():
+    TRACES_URL = "http://%(host)s/1/traces?limit=%(limit)s&offset=%(offset)s"
     def GET(self):
-        return jsonify({
-            'min_version':'0.0.1',
-            'served_regions':[
-                {
-                    'name': 'Viareggio',
-                    'center': {
-                        'lat': 43.873676,
-                        'lon': 10.248534
-                    },
-                    'radius': 10,
-                    'hours': [
-                         {
-                             'day_of_week': 0,
-                             'from': 16,
-                             'to': 24
-                         }, {
-                             'day_of_week': 1,
-                             'from': 18,
-                             'to': 24
-                         }, {
-                             'day_of_week': 2,
-                             'from': 18,
-                             'to': 24
-                         }, {
-                             'day_of_week': 3,
-                             'from': 18,
-                             'to': 24
-                         }, {
-                             'day_of_week': 4,
-                             'from': 18,
-                             'to': 24
-                         }, {
-                             'day_of_week': 5,
-                             'from': 18,
-                             'to': 2
-                         }, {
-                             'day_of_week': 6,
-                             'from': 18,
-                             'to': 2
-                         }
-                    ]
-                }
-            ]
-        })
+        if not web.cookies().get('authorized'):
+            return web.ctx.render.login()
+
+        data = web.input(limit=1000, offset=0)
+        url = self.TRACES_URL % dict(host=web.config.API_HOST,
+                                     limit=data.limit,
+                                     offset=data.offset)
+        data = json.load(urllib2.urlopen(url))
+        traces = [Trace(t) for t in data['traces']]
+        return web.ctx.render.traces(traces=traces)
+
+    def POST(self):
+        data = web.input(secret='')
+        if data.secret != web.config.SECRET:
+            raise web.unauthorized()
+
+        web.setcookie('authorized', 1, 3600)
+        raise web.seeother("/")

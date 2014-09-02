@@ -18,13 +18,6 @@ from fabric.colors import red
 from fabric.decorators import task
 
 
-env.appname = 'getstrappo'
-env.appport = '8000'
-env.servername = 'http://getstrappo.com'
-env.repo_url = 'ssh://hg@bitbucket.org/iamFIREcracker/getstrappo'
-env.site_url = 'http://localhost:8080/hello'
-
-
 def _happy():
     print(green('\nLooks good from here!\n'))
 
@@ -223,3 +216,21 @@ def prerequisites():
 @task
 def i18nupdate():
     cmd('./make_strings.sh')
+
+
+
+@task
+def pull_uploads():
+    '''Copy the uploads from the site to your local machine.'''
+    require('uploads_path')
+
+    sudo('chmod -R a+r "%s"' % env.uploads_path)
+
+    rsync_command = r"""rsync -av -e 'ssh -p %s' %s@%s:%s %s""" % (
+        env.port,
+        env.user, env.host,
+        env.uploads_path.rstrip('/') + '/',
+        'static/uploads'
+    )
+    print local(rsync_command, capture=False)
+

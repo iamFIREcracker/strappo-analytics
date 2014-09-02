@@ -21,9 +21,9 @@ from fabric.decorators import task
 from fabfilecommon import *
 
 
-env.appname = 'strappo-api'
-env.appport = '8000'
-env.repo_url = 'ssh://hg@bitbucket.org/iamFIREcracker/strappo-api'
+env.appname = 'strappo-analytics'
+env.appport = '8002'
+env.repo_url = 'ssh://hg@bitbucket.org/iamFIREcracker/strappo-analytics'
 
 @task
 def dev():
@@ -38,8 +38,8 @@ def dev():
 
     env.config = 'dev_config.py'
 
-    env.servername = 'api.dev.getstrappo.com'
-    env.site_url = 'http://%s/1/info' % env.hosts[0]
+    env.servername = 'analytics.dev.getstrappo.com'
+    env.site_url = 'http://%s?limit=1' % env.hosts[0]
 
 @task
 def prod():
@@ -54,8 +54,8 @@ def prod():
 
     env.config = 'prod_config.py'
 
-    env.servername = 'api.getstrappo.com'
-    env.site_url = 'http://%s/1/info' % env.hosts[0]
+    env.servername = 'analytics.getstrappo.com'
+    env.site_url = 'http://%s?limit1' % env.hosts[0]
 
 
 @task
@@ -76,12 +76,6 @@ def bootstrap():
     print(cyan('Creating venv...'))
     vcreate()
 
-    print(cyan('Initialize database...'))
-    dbupdate()
-
-    print(cyan('Recreate i18n strings...'))
-    i18nupdate()
-
     restart()
 
 @task
@@ -99,12 +93,6 @@ def update():
     print(cyan('Updating venv...'))
     vupdate()
 
-    print(cyan('Updating database...'))
-    dbupdate()
-
-    print(cyan('Recreate i18n strings...'))
-    i18nupdate()
-
     restart()
 
 
@@ -116,5 +104,4 @@ def restart():
 
     print(cyan("Restarting supervisor..."))
     # XXX Issuing a 'service supervisor restart' will produce an error!!!
-    sdo("service supervisor stop")
-    sdo("service supervisor start")
+    sdo("service supervisor stop && sleep 5 && service supervisor start")
