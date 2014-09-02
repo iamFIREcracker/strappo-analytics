@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
-import datetime
-import json
+import time
 
+import web
 from web.session import Store
 
 
-def _id(key):
-    return 'webpy.' + key
+def _key(key):
+    return 'webpy-session:' + key
+
+_sessions = 'webpy-sessions'
 
 
 class RedisStore(Store):
@@ -15,20 +17,26 @@ class RedisStore(Store):
         self._redis = redis
 
     def __contains__(self, key):
-        return self._redis.get(_id(key)) is not None
+        return self._redis.exists(_key(key))
 
     def __getitem__(self, key):
-        value = json.loads(self._redis.get(_id(key)))[0]
+        value = self._redis.hget(_key(key), 'value')
+        if value:
+            value = self.decode(value)
         self[key] = value
         return value
 
     def __setitem__(self, key, value):
-        data = json.dumps([value, str(datetime.datetime.now())])
-        self._redis.set(_id(key), data)
+        atime = time.time()
+        self._redis.zadd(_sessions, key, atime)
+        self._redis.hmset(_key(key), dict(time=atime,
+                                          value=self.encode(value)))
 
     def __delitem__(self, key):
-        self._redis.delete(_id(key))
+        self._redis.zrem(_sessions, key)
+        self._redis.delete(_key(key))
 
     def cleanup(self, timeout):
-        # XXX implement this
-        pass
+        now = time.time()
+        for key in self._redis.zrangebyscore(_sessions, '-inf', now - timeout):
+            del self[key]
