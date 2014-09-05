@@ -25,13 +25,3 @@ supervisor::gunicorn {'supervisor-gunicorn':
   appname => $appname,
   user => $user,
 }
-
-supervisor::celery {'supervisor-celery':
-  appname => $appname,
-  user => $user,
-}
-
-supervisor::celerybeat {'supervisor-celerybeat':
-  appname => $appname,
-  user => $user,
-}
