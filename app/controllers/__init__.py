@@ -1,38 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from collections import namedtuple
-
-import json
-import urllib
-import urllib2
-
 import web
 
-
-class Trace(object):
-    def __init__(self, data):
-        self.id = data['id']
-        self.user_id = data['user_id']
-        self.user_name = data['user_name']
-        self.created = data['date']
-        self.created_day = data['date'].split('T')[0]
-        self.message = data['message']
+from app.request_decorators import authorized
 
 
-class IndexController():
-    TRACES_URL = "http://%(host)s/1/traces?limit=%(limit)s&offset=%(offset)s"
+class LoginController():
     def GET(self):
         if not web.cookies().get('authorized'):
             return web.ctx.render.login()
-
-        data = web.input(limit=1000, offset=0)
-        url = self.TRACES_URL % dict(host=web.config.API_HOST,
-                                     limit=data.limit,
-                                     offset=data.offset)
-        data = json.load(urllib2.urlopen(url))
-        traces = [Trace(t) for t in data['traces']]
-        return web.ctx.render.traces(traces=traces)
+        raise web.seeother("/")
 
     def POST(self):
         data = web.input(secret='')
@@ -40,4 +18,10 @@ class IndexController():
             raise web.unauthorized()
 
         web.setcookie('authorized', 1, 3600)
-        raise web.seeother("/")
+        raise web.seeother('/')
+
+
+class IndexController():
+    @authorized
+    def GET(self):
+        return web.ctx.render.index()

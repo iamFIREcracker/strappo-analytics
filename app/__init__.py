@@ -16,10 +16,9 @@ web.config.LOGGER_NAME = config.LOGGER_NAME
 web.config.LOG_ENABLE = config.LOG_ENABLE
 web.config.LOG_FORMAT = config.LOG_FORMAT
 
-web.config.API_HOST = config.API_HOST
-
 web.config.SECRET = config.SECRET
 
+web.config.DATABASE_URL = config.DATABASE_URL
 
 
 def app_factory():
@@ -31,6 +30,7 @@ def app_factory():
     from app.weblib.app_processors import load_logger
     from app.weblib.app_processors import load_path_url
     from app.weblib.app_processors import load_render
+    from app.weblib.app_processors import load_and_manage_orm
 
     views = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'views')
     app = web.application(URLS, globals())
@@ -38,5 +38,6 @@ def app_factory():
     app.add_processor(web.loadhook(load_logger))
     app.add_processor(web.loadhook(load_path_url))
     app.add_processor(web.loadhook(load_render(views)))
+    app.add_processor(load_and_manage_orm(weblib.db.create_session()))
 
     return app
