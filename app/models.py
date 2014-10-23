@@ -37,6 +37,8 @@ class User(Base):
     updated = Column(DateTime, default=datetime.utcnow,
                      onupdate=datetime.utcnow)
 
+    traces = relationship('Trace', uselist=True, cascade='expunge')
+
     @property
     def created_day(self):
         return self.created.date()

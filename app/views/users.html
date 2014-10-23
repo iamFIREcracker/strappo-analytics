@@ -15,16 +15,18 @@
 <h1>Users ({{ users | length }})</h1>
 {% for user in users %}
 <div data-role="collapsible">
-    <h3><span><img src="{{ user.avatar }}" width="24" height="24" /> </span>{{ user.name }} - {{ user.id }}</h3>
+    <h3><span><img src="{{ user.user.avatar }}" width="24" height="24" /> </span>{{ user.user.name }}</h3>
     <div>
         <p></p>
-        <p><span><strong>ACS id:</strong></span> <span>{{ user.acs_id }}</span></p>
-        <p><span><strong>Facebook id:</strong></span> <span>{{ user.facebook_id }}</span></p>
-        <p><span><strong>Avatar:</strong></span> <span>{{ user.avatar }}</span></p>
-        <p><span><strong>Email:</strong></span> <span>{{ user.email }}</span></p>
-        <p><span><strong>Locale:</strong></span> <span>{{ user.locale }}</span></p>
-        <p><span><strong>Created:</strong></span> <span>{{ user.created_day }}</span></p>
-        <a href="/traces?user_id={{ user.id }}" data-ajax="false">Traces</a>
+        <p><span><strong>Id:</strong></span> <span>{{ user.user.id }}</span></p>
+        <p><span><strong>ACS id:</strong></span> <span>{{ user.user.acs_id }}</span></p>
+        <p><span><strong>Facebook id:</strong></span> <span>{{ user.user.facebook_id }}</span></p>
+        <p><span><strong>Avatar:</strong></span> <span>{{ user.user.avatar }}</span></p>
+        <p><span><strong>Email:</strong></span> <span>{{ user.user.email }}</span></p>
+        <p><span><strong>Locale:</strong></span> <span>{{ user.user.locale }}</span></p>
+        <p><span><strong>Created:</strong></span> <span>{{ user.user.created_day }}</span></p>
+        <p><span><strong>Last active:</strong></span> <span>{{ user.last_active }}</span></p>
+        <a href="/traces?user_id={{ user.user.id }}" data-ajax="false">Traces</a>
     </div>
 </div>
 {% endfor %}

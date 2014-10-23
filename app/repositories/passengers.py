@@ -5,6 +5,8 @@ from collections import namedtuple
 
 from app.models import Base
 from app.models import Passenger
+from app.models import User
+from app.models import Trace
 from app.weblib.db import expunged
 from app.weblib.db import joinedload_all
 
@@ -12,6 +14,8 @@ from sqlalchemy import func
 from sqlalchemy.sql.expression import true
 
 
+PassengerEnriched = namedtuple('PassengerEnriched',
+                               'passenger last_active'.split())
 Destination = namedtuple('Destination', 'name popularity'.split())
 Origin = namedtuple('Origin', 'name popularity'.split())
 
@@ -20,15 +24,20 @@ class PassengersRepository(object):
     @staticmethod
     def _all(limit, offset):
         options = [joinedload_all('user')]
-        return (Passenger.query.options(*options).
+        return (Base.session.query(Passenger,
+                                   func.max(Trace.date).label('last_active')).
+                options(*options).
+                select_from(Passenger).
+                join('user', 'traces').
                 filter(Passenger.active == true()).
-                order_by(Passenger.created.desc()).
+                group_by(Passenger).
+                order_by('last_active DESC').
                 limit(limit).
                 offset(offset))
 
     @staticmethod
     def all(limit, offset):
-        return [expunged(t, Passenger.session)
+        return [EnrichedPassenger(expunged(t[0], Passenger.session), t[1])
                 for t in PassengersRepository._all(limit, offset)]
 
     @staticmethod
