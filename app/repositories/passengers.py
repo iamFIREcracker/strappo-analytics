@@ -37,7 +37,7 @@ class PassengersRepository(object):
 
     @staticmethod
     def all(limit, offset):
-        return [EnrichedPassenger(expunged(t[0], Passenger.session), t[1])
+        return [PassengerEnriched(expunged(t[0], Passenger.session), t[1])
                 for t in PassengersRepository._all(limit, offset)]
 
     @staticmethod
