@@ -10,19 +10,12 @@
 <form method="get" data-ajax="false">
     <input type="text" name="limit" placeholder="Limit" />
     <input type="text" name="offset" placeholder="Offset" />
-    <input type="hidden" name="user_id" value="{{ user_id }}" />
     <input type="submit" value="Submit" />
 </form>
-<h1>Traces ({{ traces[0].user.name if traces else '' }})</h1>
-{% for by_created_day in traces | groupby('created_day') | sort(reverse=True) %}
+<h1>Destinations ({{ destinations | length }})</h1>
+{% for destination in destinations %}
 <div data-role="collapsible">
-    <h3>{{ by_created_day.grouper }}</h3>
-    {% for trace in by_created_day.list %}
-        <div>
-            <span>{{ trace.created }}</span>
-            <span>{{ trace.message }}</span>
-        </div>
-    {% endfor %}
+    <h3></span>({{ destination.popularity }}) {{ destination.name }}</h3>
 </div>
 {% endfor %}
 </body>

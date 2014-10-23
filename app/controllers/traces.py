@@ -15,13 +15,14 @@ class ListTracesController():
     def GET(self):
         logger = LoggingSubscriber(web.ctx.logger)
         traces = ListTracesWorkflow()
+        params = web.input(user_id='', limit=1000, offset=0)
         ret = Future()
 
         class ListTracesSubscriber(object):
             def success(self, traces):
-                ret.set(web.ctx.render.traces(traces=traces))
+                ret.set(web.ctx.render.traces(user_id=params.user_id,
+                                              traces=traces))
 
         traces.add_subscriber(logger, ListTracesSubscriber())
-        traces.perform(web.ctx.logger, TracesRepository,
-                       web.input(limit=1000, offset=0))
+        traces.perform(web.ctx.logger, TracesRepository, params)
         return ret.get()

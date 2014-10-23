@@ -15,13 +15,15 @@
 <h1>Drivers ({{ drivers | length }})</h1>
 {% for driver in drivers %}
 <div data-role="collapsible">
-    <h3>{{ driver.user.name }} ({{ driver.created_day}}) - {{ driver.user.id }}</h3>
+    <h3><span><img src="{{ driver.user.avatar }}" width="24" height="24" /></span> {{ driver.user.name }} - {{ driver.user.id }}</h3>
     <div>
-        <p><span>{{ driver.car_make }}</span></p>
-        <p><span>{{ driver.car_model }}</span></p>
-        <p><span>{{ driver.car_color }}</span></p>
-        <p><span>{{ driver.license_plate }}</span></p>
-        <p><span>{{ driver.telephone }}</span></p>
+        <p><span><strong>Car make:</strong> <span>{{ driver.car_make }}</span></p>
+        <p><span><strong>Car model:</strong> <span>{{ driver.car_model }}</span></p>
+        <p><span><strong>Car color:</strong> <span>{{ driver.car_color }}</span></p>
+        <p><span><strong>License plate:</strong> <span>{{ driver.license_plate }}</span></p>
+        <p><span><strong>Telephone:</strong> <span>{{ driver.telephone }}</span></p>
+        <p><span><strong>Created:</strong></span> <span>{{ driver.created_day }}</span></p>
+        <a href="/traces?user_id={{ driver.user.id }}" data-ajax="false">Traces</a>
     </div>
 </div>
 {% endfor %}

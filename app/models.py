@@ -37,6 +37,10 @@ class User(Base):
     updated = Column(DateTime, default=datetime.utcnow,
                      onupdate=datetime.utcnow)
 
+    @property
+    def created_day(self):
+        return self.created.date()
+
 
 class Driver(Base):
     __tablename__ = 'driver'
@@ -49,6 +53,32 @@ class Driver(Base):
     license_plate = Column(String)
     telephone = Column(String)
     hidden = Column(Boolean, default=False)
+    active = Column(Boolean, default=True)
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+
+    user = relationship('User', uselist=False, cascade='expunge')
+
+    @property
+    def created_day(self):
+        return self.created.date()
+
+
+class Passenger(Base):
+    __tablename__ = 'passenger'
+
+    id = Column(String, default=uuid, primary_key=True)
+    user_id = Column(String, ForeignKey('user.id'))
+    origin = Column(Text)
+    origin_latitude = Column(Float)
+    origin_longitude = Column(Float)
+    destination = Column(Text)
+    destination_latitude = Column(Float)
+    destination_longitude = Column(Float)
+    distance = Column(Float, nullable=False, server_default=text('0'))
+    seats = Column(Integer)
+    matched = Column(Boolean, default=False)
     active = Column(Boolean, default=True)
     created = Column(DateTime, default=datetime.utcnow)
     updated = Column(DateTime, default=datetime.utcnow,
