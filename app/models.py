@@ -19,15 +19,85 @@ from app.weblib.db import Time
 from app.weblib.db import text
 
 
-
 Base = declarative_base()
+
+
+class User(Base):
+    __tablename__ = 'user'
+
+    id = Column(String, default=uuid, primary_key=True)
+    acs_id = Column(String)  # XXX Should be not nullable
+    facebook_id = Column(String)  # XXX Should be not nullable
+    name = Column(String, nullable=False)
+    avatar = Column(String, nullable=True)
+    email = Column(String, nullable=True)
+    locale = Column(String, nullable=False)
+    deleted = Column(Boolean, default=False, nullable=False)
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+
+    traces = relationship('Trace', uselist=True, cascade='expunge')
+
+    @property
+    def created_day(self):
+        return self.created.date()
+
+
+class Driver(Base):
+    __tablename__ = 'driver'
+
+    id = Column(String, default=uuid, primary_key=True)
+    user_id = Column(String, ForeignKey('user.id'))
+    car_make = Column(String)
+    car_model = Column(String)
+    car_color = Column(String)
+    license_plate = Column(String)
+    telephone = Column(String)
+    hidden = Column(Boolean, default=False)
+    active = Column(Boolean, default=True)
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+
+    user = relationship('User', uselist=False, cascade='expunge')
+
+    @property
+    def created_day(self):
+        return self.created.date()
+
+
+class Passenger(Base):
+    __tablename__ = 'passenger'
+
+    id = Column(String, default=uuid, primary_key=True)
+    user_id = Column(String, ForeignKey('user.id'))
+    origin = Column(Text)
+    origin_latitude = Column(Float)
+    origin_longitude = Column(Float)
+    destination = Column(Text)
+    destination_latitude = Column(Float)
+    destination_longitude = Column(Float)
+    distance = Column(Float, nullable=False, server_default=text('0'))
+    seats = Column(Integer)
+    matched = Column(Boolean, default=False)
+    active = Column(Boolean, default=True)
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+
+    user = relationship('User', uselist=False, cascade='expunge')
+
+    @property
+    def created_day(self):
+        return self.created.date()
 
 
 class Trace(Base):
     __tablename__ = 'trace'
 
     id = Column(String, default=uuid, primary_key=True)
-    user_id = Column(String)
+    user_id = Column(String, ForeignKey('user.id'))
     level = Column(String)
     date = Column(String)
     message = Column(Text)
@@ -35,14 +105,8 @@ class Trace(Base):
     updated = Column(DateTime, default=datetime.utcnow,
                      onupdate=datetime.utcnow)
 
+    user = relationship('User', uselist=False)
+
     @property
     def created_day(self):
         return self.created.date()
-
-    def __repr__(self):
-        data = u'<Trace id=%(id)s, user_id=%(user_id)s, '\
-                'level=%(level)s, date=%(date)s, '\
-                'message=%(message)s>' % self.__dict__
-        return data.encode('utf-8')
-
-

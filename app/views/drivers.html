@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css"></link>
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+</head>
+<body>
+<form method="get" data-ajax="false">
+    <input type="text" name="limit" placeholder="Limit" />
+    <input type="text" name="offset" placeholder="Offset" />
+    <input type="submit" value="Submit" />
+</form>
+<h1>Drivers ({{ drivers | length }})</h1>
+{% for driver in drivers %}
+<div data-role="collapsible">
+    <h3><span><img src="{{ driver.driver.user.avatar }}" width="24" height="24" /></span> {{ driver.driver.user.name }}</h3>
+    <div>
+        <p><span><strong>Car make:</strong> <span>{{ driver.driver.car_make }}</span></p>
+        <p><span><strong>Car model:</strong> <span>{{ driver.driver.car_model }}</span></p>
+        <p><span><strong>Car color:</strong> <span>{{ driver.driver.car_color }}</span></p>
+        <p><span><strong>License plate:</strong> <span>{{ driver.driver.license_plate }}</span></p>
+        <p><span><strong>Telephone:</strong> <span>{{ driver.driver.telephone }}</span></p>
+        <p><span><strong>Created:</strong></span> <span>{{ driver.driver.created_day }}</span></p>
+        <p><span><strong>Last active:</strong></span> <span>{{ driver.last_active }}</span></p>
+        <a href="/traces?user_id={{ driver.driver.user.id }}" data-ajax="false">Traces</a>
+    </div>
+</div>
+{% endfor %}
+</body>
+</html>
