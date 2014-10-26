@@ -35,8 +35,3 @@ class TracesRepository(object):
         return [expunged(t, Trace.session)
                 for t in TracesRepository._all_by_user_id(user_id,
                                                           limit, offset)]
-
-
-if __name__ == '__main__':
-    print [dict(user_id=t.user_id,
-                date=t.date) for t in TracesRepository.all(20, 0)]
