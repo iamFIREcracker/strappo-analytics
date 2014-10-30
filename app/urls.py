@@ -9,6 +9,7 @@ from app.controllers.passengers import ListPassengerOriginsController
 from app.controllers.passengers import ListPassengersController
 from app.controllers.traces import ListTracesController
 from app.controllers.users import ListUsersController
+from app.controllers.versions import ListVersionsController
 
 
 URLS = (
@@ -25,4 +26,6 @@ URLS = (
     '/users', ListUsersController,
 
     '/traces', ListTracesController,
+
+    '/versions', ListVersionsController,
 )
