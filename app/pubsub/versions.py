@@ -20,7 +20,3 @@ def sort(versions):
 class VersionsSorter(Publisher):
     def perform(self, versions):
         self.publish('versions_sorted', sort(versions))
-
-
-if __name__ == '__main__':
-    print sorted((0, 0, 0))
