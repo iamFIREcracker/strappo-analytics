@@ -111,3 +111,20 @@ class Trace(Base):
     @property
     def created_day(self):
         return self.created.date()
+
+
+class Feedback(Base):
+    __tablename__ = 'feedback'
+
+    id = Column(String, default=uuid, primary_key=True)
+    user_id = Column(String, ForeignKey('user.id'))
+    message = Column(Text)
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+
+    user = relationship('User', uselist=False)
+
+    @property
+    def created_day(self):
+        return self.created.date()

@@ -4,6 +4,7 @@
 from app.controllers import IndexController
 from app.controllers import LoginController
 from app.controllers.drivers import ListDriversController
+from app.controllers.feedbacks import ListFeedbacksController
 from app.controllers.passengers import ListPassengerDestinationsController
 from app.controllers.passengers import ListPassengerOriginsController
 from app.controllers.passengers import ListPassengersController
@@ -19,13 +20,15 @@ URLS = (
 
     '/drivers', ListDriversController,
 
+    '/feedbacks', ListFeedbacksController,
+
     '/passengers', ListPassengersController,
     '/passengers/origins', ListPassengerOriginsController,
     '/passengers/destinations', ListPassengerDestinationsController,
 
-    '/users', ListUsersController,
-
     '/traces', ListTracesController,
+
+    '/users', ListUsersController,
 
     '/versions', ListVersionsController,
 )
