@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css"></link>
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+</head>
+<body>
+<form method="get" data-ajax="false">
+    <input type="text" name="limit" placeholder="Limit" />
+    <input type="text" name="offset" placeholder="Offset" />
+    <input type="hidden" name="user_id" value="{{ user_id }}" />
+    <input type="submit" value="Submit" />
+</form>
+<h2>Driver Perks ({{ driver_perks | length }})</h2>
+{% for perk in driver_perks %}
+<div data-role="collapsible">
+    <h3>{{ perk.name }}</h3>
+    <div>
+        <p><span><strong>Eligible for:</strong></span> <span>{{ perk.eligible_for }}</span></p>
+        <p><span><strong>Active for:</strong></span> <span>{{ perk.active_for }}</span></p>
+        <p><span><strong>Fixed rate:</strong></span> <span>{{ perk.fixed_rate }}</span></p>
+        <p><span><strong>Multiplier:</strong></span> <span>{{ perk.multiplier }}</span></p>
+    </div>
+</div>
+{% endfor %}
+<h2>Passenger Perks ({{ passenger_perks | length }})</h2>
+{% for perk in passenger_perks %}
+<div data-role="collapsible">
+    <h3>{{ perk.name }}</h3>
+    <div>
+        <p><span><strong>Eligible for:</strong></span> <span>{{ perk.eligible_for }}</span></p>
+        <p><span><strong>Active for:</strong></span> <span>{{ perk.active_for }}</span></p>
+        <p><span><strong>Fixed rate:</strong></span> <span>{{ perk.fixed_rate }}</span></p>
+        <p><span><strong>Multiplier:</strong></span> <span>{{ perk.multiplier }}</span></p>
+    </div>
+</div>
+{% endfor %}
+</body>
+</html>

@@ -8,6 +8,7 @@ from app.controllers.feedbacks import ListFeedbacksController
 from app.controllers.passengers import ListPassengerDestinationsController
 from app.controllers.passengers import ListPassengerOriginsController
 from app.controllers.passengers import ListPassengersController
+from app.controllers.perks import ListPerksController
 from app.controllers.traces import ListTracesController
 from app.controllers.users import ListUserVersionsController
 from app.controllers.users import ListUsersController
@@ -25,6 +26,8 @@ URLS = (
     '/passengers', ListPassengersController,
     '/passengers/origins', ListPassengerOriginsController,
     '/passengers/destinations', ListPassengerDestinationsController,
+
+    '/perks', ListPerksController,
 
     '/traces', ListTracesController,
 

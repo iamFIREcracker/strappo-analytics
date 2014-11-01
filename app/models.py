@@ -128,3 +128,93 @@ class Feedback(Base):
     @property
     def created_day(self):
         return self.created.date()
+
+
+class DriverPerk(Base):
+    __tablename__ = 'driver_perk'
+
+    id = Column(String, default=uuid, primary_key=True)
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+    deleted = Column(Boolean, default=False, nullable=False)
+    name = Column(String, nullable=False)
+    eligible_for = Column(Integer, nullable=False)
+    active_for = Column(Integer, nullable=False)
+    fixed_rate = Column(Float, nullable=False)
+    multiplier = Column(Float, nullable=False)
+
+
+class EligibleDriverPerk(Base):
+    __tablename__ = 'eligible_driver_perk'
+
+    id = Column(String, default=uuid, primary_key=True)
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+    deleted = Column(Boolean, default=False, nullable=False)
+    user_id = Column(String, ForeignKey('user.id'), nullable=True)
+    perk_id = Column(String, ForeignKey('driver_perk.id'), nullable=True)
+    valid_until = Column(DateTime, nullable=False)
+
+    perk = relationship('DriverPerk', uselist=False, cascade='expunge')
+
+
+class ActiveDriverPerk(Base):
+    __tablename__ = 'active_driver_perk'
+
+    id = Column(String, default=uuid, primary_key=True)
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+    deleted = Column(Boolean, default=False, nullable=False)
+    user_id = Column(String, ForeignKey('user.id'), nullable=True)
+    perk_id = Column(String, ForeignKey('driver_perk.id'), nullable=True)
+    valid_until = Column(DateTime, nullable=False)
+
+    perk = relationship('DriverPerk', uselist=False, cascade='expunge')
+
+
+class PassengerPerk(Base):
+    __tablename__ = 'passenger_perk'
+
+    id = Column(String, default=uuid, primary_key=True)
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+    deleted = Column(Boolean, default=False, nullable=False)
+    name = Column(String, nullable=False)
+    eligible_for = Column(Integer, nullable=False)
+    active_for = Column(Integer, nullable=False)
+    fixed_rate = Column(Float, nullable=False)
+    multiplier = Column(Float, nullable=False)
+
+
+class EligiblePassengerPerk(Base):
+    __tablename__ = 'eligible_passenger_perk'
+
+    id = Column(String, default=uuid, primary_key=True)
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+    deleted = Column(Boolean, default=False, nullable=False)
+    user_id = Column(String, ForeignKey('user.id'), nullable=True)
+    perk_id = Column(String, ForeignKey('passenger_perk.id'), nullable=True)
+    valid_until = Column(DateTime, nullable=False)
+
+    perk = relationship('PassengerPerk', uselist=False, cascade='expunge')
+
+
+class ActivePassengerPerk(Base):
+    __tablename__ = 'active_passenger_perk'
+
+    id = Column(String, default=uuid, primary_key=True)
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+    deleted = Column(Boolean, default=False, nullable=False)
+    user_id = Column(String, ForeignKey('user.id'), nullable=True)
+    perk_id = Column(String, ForeignKey('passenger_perk.id'), nullable=True)
+    valid_until = Column(DateTime, nullable=False)
+
+    perk = relationship('PassengerPerk', uselist=False, cascade='expunge')
