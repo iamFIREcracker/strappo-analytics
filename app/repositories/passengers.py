@@ -30,7 +30,7 @@ class PassengersRepository(object):
                 select_from(Passenger).
                 join('user', 'traces').
                 filter(Passenger.active == true()).
-                group_by(Passenger).
+                group_by(User.id).
                 order_by('last_active DESC').
                 limit(limit).
                 offset(offset))

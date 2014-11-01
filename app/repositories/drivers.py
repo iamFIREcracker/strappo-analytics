@@ -27,7 +27,7 @@ class DriversRepository(object):
                 select_from(Driver).
                 join('user', 'traces').
                 filter(Driver.active == true()).
-                group_by(Driver).
+                group_by(User.id).
                 order_by('last_active DESC').
                 limit(limit).
                 offset(offset))
