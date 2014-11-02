@@ -3,10 +3,11 @@
 
 import web
 
+from weblib.pubsub import Future
+from weblib.pubsub import LoggingSubscriber
+
 from app.repositories.feedbacks import FeedbacksRepository
 from app.request_decorators import authorized
-from app.weblib.pubsub import Future
-from app.weblib.pubsub import LoggingSubscriber
 from app.workflows.feedbacks import ListFeedbacksWorkflow
 
 

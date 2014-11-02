@@ -3,11 +3,11 @@
 
 from collections import namedtuple
 
+from weblib.db import expunged
+from weblib.db import joinedload_all
+
 from app.models import Base
 from app.models import Feedback
-from app.weblib.db import expunged
-
-from app.weblib.db import joinedload_all
 
 
 FeedbackEnriched = namedtuple('FeedbackEnriched',

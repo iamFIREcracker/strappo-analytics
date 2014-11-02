@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from app.weblib.pubsub import Future
-from app.weblib.pubsub import LoggingSubscriber
-from app.weblib.pubsub import Publisher
+from weblib.pubsub import Future
+from weblib.pubsub import LoggingSubscriber
+from weblib.pubsub import Publisher
 
 from app.pubsub.perks import DriverPerksGetter
 from app.pubsub.perks import PassengerPerksGetter

@@ -3,10 +3,11 @@
 
 import web
 
+from weblib.pubsub import Future
+from weblib.pubsub import LoggingSubscriber
+
 from app.repositories.passengers import PassengersRepository
 from app.request_decorators import authorized
-from app.weblib.pubsub import Future
-from app.weblib.pubsub import LoggingSubscriber
 from app.workflows.passengers import ListPassengersWorkflow
 from app.workflows.passengers import ListPassengerDestinationsWorkflow
 from app.workflows.passengers import ListPassengerOriginsWorkflow

@@ -26,11 +26,12 @@ def app_factory():
     import weblib.db
     import weblib.gettext
     import weblib.redis
+    from weblib.app_processors import load_logger
+    from weblib.app_processors import load_path_url
+    from weblib.app_processors import load_render
+    from weblib.app_processors import load_and_manage_orm
+
     from app.urls import URLS
-    from app.weblib.app_processors import load_logger
-    from app.weblib.app_processors import load_path_url
-    from app.weblib.app_processors import load_render
-    from app.weblib.app_processors import load_and_manage_orm
 
     views = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'views')
     app = web.application(URLS, globals())

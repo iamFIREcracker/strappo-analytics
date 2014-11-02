@@ -3,13 +3,13 @@
 
 from collections import namedtuple
 
+from sqlalchemy import func
+from sqlalchemy.sql.expression import false
+from weblib.db import expunged
+
 from app.models import Base
 from app.models import Trace
 from app.models import User
-from app.weblib.db import expunged
-
-from sqlalchemy import func
-from sqlalchemy.sql.expression import false
 
 
 UserEnriched = namedtuple('UserEnriched',

@@ -4,7 +4,7 @@
 from collections import namedtuple
 from itertools import groupby
 
-from app.weblib.pubsub import Publisher
+from weblib.pubsub import Publisher
 
 
 UsersGroup = namedtuple('UsersGroup', 'app_version users'.split())
