@@ -1,18 +1,35 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
-from app.models import DriverPerk
-from app.models import PassengerPerk
-from app.weblib.db import expunged
-from app.weblib.db import joinedload_all
+from collections import namedtuple
+from datetime import date
 
 from sqlalchemy.sql.expression import false
+from sqlalchemy.sql.expression import true
+from weblib.db import and_
+from weblib.db import exists
+from weblib.db import expunged
+from weblib.db import func
+from weblib.db import joinedload
+from weblib.db import joinedload_all
+
+from app.models import ActiveDriverPerk
+from app.models import Base
+from app.models import DriveRequest
+from app.models import DriverPerk
+from app.models import EligibleDriverPerk
+from app.models import PassengerPerk
+from app.models import User
+
+
+EnrichedEligibleDriverPerk = namedtuple('EnrichedEligibleDriverPerk',
+                                        'perk rides_given'.split())
 
 
 class PerksRepository(object):
     STANDARD_DRIVER_NAME = 'driver_standard'
     STANDARD_PASSENGER_NAME = 'passenger_standard'
+    EARLY_BIRD_DRIVER_NAME = 'driver_early_bird'
 
     @staticmethod
     def _all_driver_perks(limit, offset):
@@ -27,6 +44,30 @@ class PerksRepository(object):
     def all_driver_perks(limit, offset):
         return [expunged(r, DriverPerk.session)
                 for r in PerksRepository._all_driver_perks(limit, offset)]
+
+    @staticmethod
+    def _eligible_driver_perks_with_name(name):
+        return (Base.session.query(EligibleDriverPerk).
+                options(joinedload_all('user')).
+                join('perk').
+                join('user').
+                filter(EligibleDriverPerk.deleted == false()).
+                filter(EligibleDriverPerk.valid_until >= date.today()).
+                filter(DriverPerk.name == name).
+                filter(~exists().
+                       where(and_(ActiveDriverPerk.perk_id ==
+                                  EligibleDriverPerk.perk_id,
+                                  ActiveDriverPerk.user_id ==
+                                  EligibleDriverPerk.user_id))).
+                order_by(EligibleDriverPerk.created.desc()).
+                group_by(User.id, EligibleDriverPerk.id))
+
+    @staticmethod
+    def eligible_driver_perks_with_name(name):
+        return [expunged(p, Base.session)
+                for p in PerksRepository.
+                _eligible_driver_perks_with_name(name)]
+
 
     @staticmethod
     def _all_passenger_perks(limit, offset):
@@ -44,5 +85,4 @@ class PerksRepository(object):
 
 
 if __name__ == '__main__':
-    print list(PerksRepository._all_driver_perks(10000, 0))
-    print list(PerksRepository._all_passenger_perks(10000, 0))
+    print PerksRepository.eligible_driver_perks_with_name('driver_early_bird')

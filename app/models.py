@@ -37,6 +37,7 @@ class User(Base):
     updated = Column(DateTime, default=datetime.utcnow,
                      onupdate=datetime.utcnow)
 
+    drivers = relationship('Driver', uselist=True, cascade='expunge')
     traces = relationship('Trace', uselist=True, cascade='expunge')
 
     @property
@@ -61,6 +62,8 @@ class Driver(Base):
                      onupdate=datetime.utcnow)
 
     user = relationship('User', uselist=False, cascade='expunge')
+    drive_requests = relationship('DriveRequest',
+                                  uselist=True, cascade='expunge')
 
     @property
     def created_day(self):
@@ -157,6 +160,7 @@ class EligibleDriverPerk(Base):
     perk_id = Column(String, ForeignKey('driver_perk.id'), nullable=True)
     valid_until = Column(DateTime, nullable=False)
 
+    user = relationship('User', uselist=False, cascade='expunge')
     perk = relationship('DriverPerk', uselist=False, cascade='expunge')
 
 
@@ -218,3 +222,19 @@ class ActivePassengerPerk(Base):
     valid_until = Column(DateTime, nullable=False)
 
     perk = relationship('PassengerPerk', uselist=False, cascade='expunge')
+
+
+class DriveRequest(Base):
+    __tablename__ = 'drive_request'
+
+    id = Column(String, default=uuid, primary_key=True)
+    driver_id = Column(String, ForeignKey('driver.id'))
+    passenger_id = Column(String, ForeignKey('passenger.id'))
+    accepted = Column(Boolean, default=False)
+    cancelled = Column(Boolean, default=False)
+    active = Column(Boolean, default=True)
+    response_time = Column(Integer, nullable=False, server_default=text('0'))
+    created = Column(DateTime, default=datetime.utcnow)
+    updated = Column(DateTime, default=datetime.utcnow,
+                     onupdate=datetime.utcnow)
+    driver = relationship('Driver', uselist=False, cascade='expunge')

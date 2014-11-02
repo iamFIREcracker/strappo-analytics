@@ -6,6 +6,8 @@ from weblib.pubsub import LoggingSubscriber
 from weblib.pubsub import Publisher
 
 from app.pubsub.perks import DriverPerksGetter
+from app.pubsub.perks import DriverErlyBirdPerkEnricher
+from app.pubsub.perks import EligibleDriverPerksWithNameGetter
 from app.pubsub.perks import PassengerPerksGetter
 
 
@@ -34,3 +36,24 @@ class ListPerksWorkflow(Publisher):
         passenger_perks_getter.add_subscriber(logger,
                                               PassengerPerksGetterSubscriber())
         driver_perks_getter.perform(repository, limit, offset)
+
+
+class ViewDriverEarlyBirdWorkflow(Publisher):
+    def perform(self, logger, perks_repository, drive_requests_repository,
+                perk_name):
+        outer = self  # Handy to access ``self`` from inner classes
+        logger = LoggingSubscriber(logger)
+        perks_getter = EligibleDriverPerksWithNameGetter()
+        perks_enricher = DriverErlyBirdPerkEnricher()
+
+        class PerksGetterSubscriber(object):
+            def perks_found(self, perks):
+                perks_enricher.perform(drive_requests_repository, perks)
+
+        class PerksEnricherSubscriber(object):
+            def perks_enriched(self, perks):
+                outer.publish('success', perks)
+
+        perks_getter.add_subscriber(logger, PerksGetterSubscriber())
+        perks_enricher.add_subscriber(logger, PerksEnricherSubscriber())
+        perks_getter.perform(perks_repository, perk_name)
