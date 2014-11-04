@@ -11,8 +11,8 @@
 <body>
 <h2>Eligible Users ({{ eligible_perks | length }})</h2>
 {% for perk in eligible_perks %}
-    <div data-role="collapsible" {{ 'data-theme="c" data-collapsed="false"' if perk.rides_given >= 1 }} style="width: 33%; float: left;">
-        <h3><span><img src="{{ perk.perk.user.avatar }}" width="24" height="24" /> </span>{{ perk.perk.user.name }}</h3>
+<div data-role="collapsible" {{ 'data-theme="c" data-collapsed="false"' if perk.rides_given >= 1 }} style="width: 33%; float: left;">
+    <h3><span><img src="{{ perk.perk.user.avatar }}" width="24" height="24" /> </span>{{ perk.perk.user.name }}</h3>
     <div>
         <p><span><strong>Created:</strong></span> <span>{{ perk.perk.created }}</span></p>
         <p><span><strong>Valid until:</strong></span> <span>{{ perk.perk.valid_until }}</span></p>
@@ -28,5 +28,17 @@
 </div>
 {% endfor %}
 <br style="clear: both" />
+<br style="clear: both" />
+<br style="clear: both" />
+<h2>Active Users ({{ active_perks | length }})</h2>
+{% for perk in active_perks %}
+<div data-role="collapsible" style="width: 33%; float: left;">
+    <h3><span><img src="{{ perk.user.avatar }}" width="24" height="24" /> </span>{{ perk.user.name }}</h3>
+    <div>
+        <p><span><strong>Created:</strong></span> <span>{{ perk.created }}</span></p>
+        <p><span><strong>Valid until:</strong></span> <span>{{ perk.valid_until }}</span></p>
+    </div>
+</div>
+{% endfor %}
 </body>
 </html>

@@ -61,10 +61,11 @@ class ViewDriverEarlyBirdController():
         ret = Future()
 
         class ViewPerkSubscriber(object):
-            def success(self, eligible_perks):
+            def success(self, eligible_perks, active_perks):
                 ret.set(web.ctx.render.
                         driver_early_bird(back=web.ctx.path,
-                                          eligible_perks=eligible_perks))
+                                          eligible_perks=eligible_perks,
+                                          active_perks=active_perks))
 
         view.add_subscriber(logger, ViewPerkSubscriber())
         view.perform(web.ctx.logger, PerksRepository, DriveRequestsRepository,

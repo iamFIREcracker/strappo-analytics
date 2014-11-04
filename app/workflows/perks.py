@@ -5,11 +5,12 @@ from weblib.pubsub import Future
 from weblib.pubsub import LoggingSubscriber
 from weblib.pubsub import Publisher
 
+from strappon.pubsub.perks import ActiveDriverPerksWithNameGetter
 from strappon.pubsub.perks import DriverErlyBirdPerkEnricher
 from strappon.pubsub.perks import DriverPerksGetter
-from strappon.pubsub.perks import EligibleDriverPerksWithNameGetter
 from strappon.pubsub.perks import EligibleDriverPerkWithNameAndUserIdGetter
 from strappon.pubsub.perks import EligibleDriverPerksActivator
+from strappon.pubsub.perks import EligibleDriverPerksWithNameGetter
 from strappon.pubsub.perks import PassengerPerksGetter
 
 
@@ -66,17 +67,29 @@ class ViewDriverEarlyBirdWorkflow(Publisher):
                 perk_name):
         outer = self  # Handy to access ``self`` from inner classes
         logger = LoggingSubscriber(logger)
-        perks_getter = EligibleDriverPerksWithNameGetter()
-        perks_enricher = DriverErlyBirdPerkEnricher()
+        eligible_perks_getter = EligibleDriverPerksWithNameGetter()
+        eligible_perks_enricher = DriverErlyBirdPerkEnricher()
+        eligible_perks_future = Future()
+        active_perks_getter = ActiveDriverPerksWithNameGetter()
 
-        class PerksGetterSubscriber(object):
+        class EligiblePerksGetterSubscriber(object):
             def perks_found(self, perks):
-                perks_enricher.perform(drive_requests_repository, perks)
+                eligible_perks_enricher.perform(drive_requests_repository,
+                                                perks)
 
-        class PerksEnricherSubscriber(object):
+        class EligiblePerksEnricherSubscriber(object):
             def perks_enriched(self, perks):
-                outer.publish('success', perks)
+                eligible_perks_future.set(perks)
+                active_perks_getter.perform(perks_repository, perk_name)
 
-        perks_getter.add_subscriber(logger, PerksGetterSubscriber())
-        perks_enricher.add_subscriber(logger, PerksEnricherSubscriber())
-        perks_getter.perform(perks_repository, perk_name)
+        class ActivePerksGetterSubscriber(object):
+            def perks_found(self, perks):
+                outer.publish('success', eligible_perks_future.get(), perks)
+
+        eligible_perks_getter.add_subscriber(logger,
+                                             EligiblePerksGetterSubscriber())
+        eligible_perks_enricher.\
+            add_subscriber(logger, EligiblePerksEnricherSubscriber())
+        active_perks_getter.add_subscriber(logger,
+                                           ActivePerksGetterSubscriber())
+        eligible_perks_getter.perform(perks_repository, perk_name)
