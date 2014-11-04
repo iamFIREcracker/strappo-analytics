@@ -3,11 +3,10 @@
 
 from collections import namedtuple
 
+from strappon.models import Base
+from strappon.models import Feedback
 from weblib.db import expunged
 from weblib.db import joinedload_all
-
-from app.models import Base
-from app.models import Feedback
 
 
 FeedbackEnriched = namedtuple('FeedbackEnriched',

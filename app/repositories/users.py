@@ -5,11 +5,10 @@ from collections import namedtuple
 
 from sqlalchemy import func
 from sqlalchemy.sql.expression import false
+from strappon.models import Base
+from strappon.models import Trace
+from strappon.models import User
 from weblib.db import expunged
-
-from app.models import Base
-from app.models import Trace
-from app.models import User
 
 
 UserEnriched = namedtuple('UserEnriched',

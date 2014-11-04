@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy.sql.expression import true
+from strappon.models import Base
+from strappon.models import DriveRequest
+from strappon.models import User
 from weblib.db import func
-
-from app.models import Base
-from app.models import DriveRequest
-from app.models import User
 
 
 class DriveRequestsRepository(object):

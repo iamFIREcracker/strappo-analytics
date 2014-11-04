@@ -6,20 +6,19 @@ from datetime import date
 
 from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.expression import true
+from strappon.models import ActiveDriverPerk
+from strappon.models import Base
+from strappon.models import DriveRequest
+from strappon.models import DriverPerk
+from strappon.models import EligibleDriverPerk
+from strappon.models import PassengerPerk
+from strappon.models import User
 from weblib.db import and_
 from weblib.db import exists
 from weblib.db import expunged
 from weblib.db import func
 from weblib.db import joinedload
 from weblib.db import joinedload_all
-
-from app.models import ActiveDriverPerk
-from app.models import Base
-from app.models import DriveRequest
-from app.models import DriverPerk
-from app.models import EligibleDriverPerk
-from app.models import PassengerPerk
-from app.models import User
 
 
 EnrichedEligibleDriverPerk = namedtuple('EnrichedEligibleDriverPerk',

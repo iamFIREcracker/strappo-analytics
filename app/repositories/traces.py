@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from strappon.models import Trace
 from weblib.db import expunged
 from weblib.db import joinedload_all
-
-from app.models import Trace
 
 
 class TracesRepository(object):
