@@ -5,10 +5,33 @@ from weblib.pubsub import Future
 from weblib.pubsub import LoggingSubscriber
 from weblib.pubsub import Publisher
 
-from app.pubsub.perks import DriverPerksGetter
-from app.pubsub.perks import DriverErlyBirdPerkEnricher
-from app.pubsub.perks import EligibleDriverPerksWithNameGetter
-from app.pubsub.perks import PassengerPerksGetter
+from strappon.pubsub.perks import DriverErlyBirdPerkEnricher
+from strappon.pubsub.perks import DriverPerksGetter
+from strappon.pubsub.perks import EligibleDriverPerksWithNameGetter
+from strappon.pubsub.perks import EligibleDriverPerkWithNameAndUserIdGetter
+from strappon.pubsub.perks import EligibleDriverPerksActivator
+from strappon.pubsub.perks import PassengerPerksGetter
+
+
+class ActivateDriverPerkWorkflow(Publisher):
+    def perform(self, orm, logger, perks_repository, perk_name, user_id):
+        outer = self  # Handy to access ``self`` from inner classes
+        logger = LoggingSubscriber(logger)
+        perks_getter = EligibleDriverPerkWithNameAndUserIdGetter()
+        perks_activator = EligibleDriverPerksActivator()
+
+        class PerksGetterSubscriber(object):
+            def perks_found(self, perks):
+                perks_activator.perform(perks_repository, perks)
+
+        class PerksActivatorSubscriber(object):
+            def perks_activated(self, perks):
+                orm.add_all(perks)
+                outer.publish('success')
+
+        perks_getter.add_subscriber(logger, PerksGetterSubscriber())
+        perks_activator.add_subscriber(logger, PerksActivatorSubscriber())
+        perks_getter.perform(perks_repository, perk_name, user_id)
 
 
 class ListPerksWorkflow(Publisher):

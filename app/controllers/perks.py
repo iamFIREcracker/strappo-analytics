@@ -5,12 +5,34 @@ import web
 
 from weblib.pubsub import Future
 from weblib.pubsub import LoggingSubscriber
+from strappon.repositories.perks import PerksRepository
 
-from app.repositories.perks import PerksRepository
 from app.repositories.drive_requests import DriveRequestsRepository
 from app.request_decorators import authorized
+from app.workflows.perks import ActivateDriverPerkWorkflow
 from app.workflows.perks import ListPerksWorkflow
 from app.workflows.perks import ViewDriverEarlyBirdWorkflow
+
+
+class ActivateDriverPerkController():
+    @authorized
+    def POST(self, perk_name):
+        logger = LoggingSubscriber(web.ctx.logger)
+        activate = ActivateDriverPerkWorkflow()
+        params = web.input(user_id='', back='/')
+
+        class ActivatePerkSubscriber(object):
+            def perk_not_found(self):
+                web.ctx.orm.rollback()
+                raise web.notfound()
+
+            def success(self):
+                web.ctx.orm.commit()
+                raise web.seeother(params.back)
+
+        activate.add_subscriber(logger, ActivatePerkSubscriber())
+        activate.perform(web.ctx.orm, web.ctx.logger, PerksRepository,
+                         perk_name, params.user_id)
 
 
 class ListPerksController():

@@ -18,11 +18,11 @@
         <p><span><strong>Valid until:</strong></span> <span>{{ perk.perk.valid_until }}</span></p>
         <p><span><strong>Rides given:</strong></span> <span>{{ perk.rides_given }}</span></p>
         {% if perk.rides_given >= 1 %}
-        <!--<form method="post" data-ajax="false" action="/perks/drivers/{{ perk.perk.perk_id }}/activate">-->
-            <!--<input type="hidden" name="user_id" value="{{ perk.perk.user_id }}" />-->
-            <!--<input type="hidden" name="back" value="{{ back }}" />-->
-            <!--<input type="submit" value="Activate" />-->
-        <!--</form>-->
+        <form method="post" data-ajax="false" action="/perks/drivers/{{ perk.perk.perk.name }}/activate">
+            <input type="hidden" name="user_id" value="{{ perk.perk.user_id }}" />
+            <input type="hidden" name="back" value="{{ back }}" />
+            <input type="submit" value="Activate" />
+        </form>
         {% endif %}
     </div>
 </div>
