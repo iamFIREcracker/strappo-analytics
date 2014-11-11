@@ -4,12 +4,16 @@
 from app.controllers import IndexController
 from app.controllers import LoginController
 from app.controllers.drivers import ListDriversController
+from app.controllers.feedbacks import ListFeedbacksController
 from app.controllers.passengers import ListPassengerDestinationsController
 from app.controllers.passengers import ListPassengerOriginsController
 from app.controllers.passengers import ListPassengersController
+from app.controllers.perks import ActivateDriverPerkController
+from app.controllers.perks import ListPerksController
+from app.controllers.perks import ViewDriverEarlyBirdController
 from app.controllers.traces import ListTracesController
+from app.controllers.users import ListUserVersionsController
 from app.controllers.users import ListUsersController
-from app.controllers.versions import ListVersionsController
 
 
 URLS = (
@@ -19,13 +23,18 @@ URLS = (
 
     '/drivers', ListDriversController,
 
+    '/feedbacks', ListFeedbacksController,
+
     '/passengers', ListPassengersController,
     '/passengers/origins', ListPassengerOriginsController,
     '/passengers/destinations', ListPassengerDestinationsController,
 
-    '/users', ListUsersController,
+    '/perks', ListPerksController,
+    '/perks/drivers/(.+)/activate', ActivateDriverPerkController,
+    '/perks/drivers/driver_early_bird/view', ViewDriverEarlyBirdController,
 
     '/traces', ListTracesController,
 
-    '/versions', ListVersionsController,
+    '/users', ListUsersController,
+    '/users/versions', ListUserVersionsController,
 )

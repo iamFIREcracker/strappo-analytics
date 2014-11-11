@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css"></link>
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+</head>
+<body>
+<form method="get" data-ajax="false">
+    <input type="text" name="limit" placeholder="Limit" />
+    <input type="text" name="offset" placeholder="Offset" />
+    <input type="submit" value="Submit" />
+</form>
+<h1>Feedbacks ({{ feedbacks | length }})</h1>
+{% for feedback in feedbacks %}
+<div data-role="collapsible">
+    <h3><span><img src="{{ feedback.feedback.user.avatar }}" width="24" height="24" /></span> {{ feedback.feedback.user.name }}</h3>
+    <div>
+        <p><span><strong>Message:</strong> <span>{{ feedback.feedback.message }}</span></p>
+        <a href="/traces?user_id={{ feedback.feedback.user.id }}" data-ajax="false">Traces</a>
+    </div>
+</div>
+{% endfor %}
+</body>
+</html>

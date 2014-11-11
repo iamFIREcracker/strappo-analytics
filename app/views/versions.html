@@ -12,10 +12,18 @@
     <input type="text" name="offset" placeholder="Offset" />
     <input type="submit" value="Submit" />
 </form>
-<h1>Versions ({{ versions | length }})</h1>
-{% for version in versions %}
+<h1>Versions</h1>
+{% for group in groups %}
 <div data-role="collapsible">
-    <h3></span>({{ version.app_version }}) {{ version.active_users }}</h3>
+    <h3></span>{{ group.app_version }} {{ group.users | length }}</h3>
+    {% for user in group.users %}
+    <div data-role="collapsible">
+        <h4><span><img src="{{ user.user.avatar }}" width="24" height="24" /> </span>{{ user.user.name }}</h4>
+        <div>
+            <p><span><strong>Last active:</strong></span> <span>{{ user.last_active }}</span></p>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endfor %}
 </body>

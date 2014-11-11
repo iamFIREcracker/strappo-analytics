@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/static/css/themes/anal.min.css" />
+<link rel="stylesheet" href="/static/css/themes/jquery.mobile.icons.min.css" />
+<link rel="stylesheet" href="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css"></link>
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+</head>
+<body>
+<h2>Eligible Users ({{ eligible_perks | length }})</h2>
+{% for perk in eligible_perks %}
+<div data-role="collapsible" {{ 'data-theme="c" data-collapsed="false"' if perk.rides_given >= 1 }} style="width: 33%; float: left;">
+    <h3><span><img src="{{ perk.perk.user.avatar }}" width="24" height="24" /> </span>{{ perk.perk.user.name }}</h3>
+    <div>
+        <p><span><strong>Created:</strong></span> <span>{{ perk.perk.created }}</span></p>
+        <p><span><strong>Valid until:</strong></span> <span>{{ perk.perk.valid_until }}</span></p>
+        <p><span><strong>Rides given:</strong></span> <span>{{ perk.rides_given }}</span></p>
+        {% if perk.rides_given >= 1 %}
+        <form method="post" data-ajax="false" action="/perks/drivers/{{ perk.perk.perk.name }}/activate">
+            <input type="hidden" name="user_id" value="{{ perk.perk.user_id }}" />
+            <input type="hidden" name="back" value="{{ back }}" />
+            <input type="submit" value="Activate" />
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+<br style="clear: both" />
+<br style="clear: both" />
+<br style="clear: both" />
+<h2>Active Users ({{ active_perks | length }})</h2>
+{% for perk in active_perks %}
+<div data-role="collapsible" style="width: 33%; float: left;">
+    <h3><span><img src="{{ perk.user.avatar }}" width="24" height="24" /> </span>{{ perk.user.name }}</h3>
+    <div>
+        <p><span><strong>Created:</strong></span> <span>{{ perk.created }}</span></p>
+        <p><span><strong>Valid until:</strong></span> <span>{{ perk.valid_until }}</span></p>
+    </div>
+</div>
+{% endfor %}
+</body>
+</html>

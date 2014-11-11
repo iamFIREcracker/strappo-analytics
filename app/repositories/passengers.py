@@ -3,15 +3,14 @@
 
 from collections import namedtuple
 
-from app.models import Base
-from app.models import Passenger
-from app.models import User
-from app.models import Trace
-from app.weblib.db import expunged
-from app.weblib.db import joinedload_all
-
 from sqlalchemy import func
 from sqlalchemy.sql.expression import true
+from strappon.models import Base
+from strappon.models import Passenger
+from strappon.models import User
+from strappon.models import Trace
+from weblib.db import expunged
+from weblib.db import joinedload_all
 
 
 PassengerEnriched = namedtuple('PassengerEnriched',
@@ -30,7 +29,7 @@ class PassengersRepository(object):
                 select_from(Passenger).
                 join('user', 'traces').
                 filter(Passenger.active == true()).
-                group_by(Passenger).
+                group_by(User.id).
                 order_by('last_active DESC').
                 limit(limit).
                 offset(offset))
