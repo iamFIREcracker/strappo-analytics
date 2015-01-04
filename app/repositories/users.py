@@ -8,6 +8,7 @@ from sqlalchemy.sql.expression import false
 from strappon.models import Base
 from strappon.models import Trace
 from strappon.models import User
+from strappon.repositories.users import UsersRepository as BaseUsersRepository
 from weblib.db import expunged
 
 
@@ -15,7 +16,7 @@ UserEnriched = namedtuple('UserEnriched',
                           'user app_version last_active'.split())
 
 
-class UsersRepository(object):
+class UsersRepository(BaseUsersRepository):
     @staticmethod
     def _all(limit, offset):
         return (Base.session.query(User,

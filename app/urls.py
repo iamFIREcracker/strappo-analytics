@@ -13,6 +13,7 @@ from app.controllers.perks import ListPerksController
 from app.controllers.perks import ViewDriverEarlyBirdController
 from app.controllers.traces import ListTracesController
 from app.controllers.users import ListUserVersionsController
+from app.controllers.users import SendMessageToUserController
 from app.controllers.users import ListUsersController
 
 
@@ -36,5 +37,6 @@ URLS = (
     '/traces', ListTracesController,
 
     '/users', ListUsersController,
+    '/users/send_message', SendMessageToUserController,
     '/users/versions', ListUserVersionsController,
 )

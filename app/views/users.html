@@ -18,7 +18,18 @@
     <h3><span><img src="{{ user.user.avatar }}" width="24" height="24" /> </span>{{ user.user.name }}</h3>
     <div>
         <p><span><strong>Id:</strong></span> <span>{{ user.user.id }}</span></p>
-        <p><span><strong>ACS id:</strong></span> <span>{{ user.user.acs_id }}</span></p>
+        <div data-role="collapsible">
+            <h4><span><strong>ACS</strong></span></h4>
+            <span><strong>ACS id:</strong></span> <span>{{ user.user.acs_id }}</span>
+            <form method="post" action="/users/send_message" data-ajax="false">
+                <input type="hidden" name="user_id" value="{{ user.user.id }}" />
+                <input type="hidden" name="back" value="{{ back }}" />
+                <input type="text" name="alert" placeholder="Alert" />
+                <input type="text" name="m_title" placeholder="Message Title" />
+                <input type="text" name="m_text" placeholder="Message text" />
+                <input type="submit" value="Send message" />
+            </form>
+        </div>
         <p><span><strong>Facebook id:</strong></span> <span>{{ user.user.facebook_id }}</span></p>
         <p><span><strong>First:</strong></span> <span>{{ user.user.first_name }}</span></p>
         <p><span><strong>Last:</strong></span> <span>{{ user.user.last_name }}</span></p>

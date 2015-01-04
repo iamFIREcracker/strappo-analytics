@@ -16,9 +16,14 @@ web.config.LOGGER_NAME = config.LOGGER_NAME
 web.config.LOG_ENABLE = config.LOG_ENABLE
 web.config.LOG_FORMAT = config.LOG_FORMAT
 
-web.config.SECRET = config.SECRET
-
 web.config.DATABASE_URL = config.DATABASE_URL
+
+web.config.TITANIUM_KEY = config.TITANIUM_KEY
+web.config.TITANIUM_LOGIN = config.TITANIUM_LOGIN
+web.config.TITANIUM_PASSWORD = config.TITANIUM_PASSWORD
+web.config.TITANIUM_NOTIFICATION_CHANNEL = config.TITANIUM_NOTIFICATION_CHANNEL
+
+web.config.SECRET = config.SECRET
 
 
 def app_factory():

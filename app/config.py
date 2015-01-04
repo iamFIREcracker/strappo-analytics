@@ -1,6 +1,4 @@
-
 APP_NAME = 'strappo-analytics'
-TAG = '0.0.1'
 
 DEBUG = False
 DEBUG_SQL = False
@@ -15,7 +13,12 @@ DISABLE_HTTP_ACCEPT_CHECK = False
 
 DATABASE_URL = 'sqlite:///appdb.sqlite'
 
-SECRET = "ohmygodlookatthetree"
+TITANIUM_KEY = 'XXX'
+TITANIUM_LOGIN = 'XXX'
+TITANIUM_PASSWORD = 'XXX'
+TITANIUM_NOTIFICATION_CHANNEL = 'XXX'
+
+SECRET = "XXX"
 
 
 try:
