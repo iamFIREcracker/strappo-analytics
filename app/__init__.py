@@ -29,8 +29,6 @@ web.config.SECRET = config.SECRET
 def app_factory():
     """App factory."""
     import weblib.db
-    import weblib.gettext
-    import weblib.redis
     from weblib.app_processors import load_logger
     from weblib.app_processors import load_path_url
     from weblib.app_processors import load_render
