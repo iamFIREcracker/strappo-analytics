@@ -19,7 +19,6 @@ setup(name='strappo-analytics',
       version=get_version(),
       packages=['app'],
       install_requires=[
-          'gunicorn==19.1.1',
           'weblib',
           'strappon'
       ])
