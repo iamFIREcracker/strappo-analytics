@@ -19,5 +19,6 @@ setup(name='strappo-analytics',
       version=get_version(),
       packages=['app'],
       install_requires=[
-          'weblib'
+          'weblib',
+          'strappon'
       ])
