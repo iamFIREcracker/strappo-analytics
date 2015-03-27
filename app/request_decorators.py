@@ -10,3 +10,11 @@ def authorized(func):
             raise web.seeother('/login')
         return func(self, *args, **kw)
     return inner
+
+
+def eggauthorized(func):
+    def inner(self, *args, **kw):
+        if not web.cookies().get('eggauthorized'):
+            raise web.seeother('/login')
+        return func(self, *args, **kw)
+    return inner

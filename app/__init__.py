@@ -24,6 +24,7 @@ web.config.TITANIUM_PASSWORD = config.TITANIUM_PASSWORD
 web.config.TITANIUM_NOTIFICATION_CHANNEL = config.TITANIUM_NOTIFICATION_CHANNEL
 
 web.config.SECRET = config.SECRET
+web.config.EGGSECRET = config.EGGSECRET
 
 
 def app_factory():

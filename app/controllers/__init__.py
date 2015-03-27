@@ -14,11 +14,14 @@ class LoginController():
 
     def POST(self):
         data = web.input(secret='')
-        if data.secret != web.config.SECRET:
+        if data.secret == web.config.SECRET:
+            web.setcookie('authorized', 1, 3600)
+            raise web.seeother('/')
+        elif data.secret == web.config.EGGSECRET:
+            web.setcookie('eggauthorized', 1, 3600)
+            raise web.seeother('/egg')
+        else:
             raise web.unauthorized()
-
-        web.setcookie('authorized', 1, 3600)
-        raise web.seeother('/')
 
 
 class IndexController():
