@@ -16,16 +16,23 @@
 {% for by_created_day in drive_requests | groupby('created_day') | sort(reverse=True) %}
 <div data-role="collapsible">
     <h3>{{ by_created_day.grouper }}</h3>
-    {% for drive_request in by_created_day.list %}
+    {% for drive_request in by_created_day.list | selectattr('driver.user') |selectattr('passenger.user') | sort(attribute='passenger.user.name') %}
     <div data-role="collapsible">
-        <h3>{{ drive_request.driver.user.name }} took {{ drive_request.passenger.user.name }} from {{ drive_request.passenger.origin }} to {{ drive_request.passenger.destination }}</h3>
-        <div>
-            <p><span><strong>Driver name:</strong>
+        <h3>{{ drive_request.passenger.user.name }}
+            <span>
+                <img src="{{ drive_request.passenger.user.avatar }}" width="24" height="24" /> 
+                was taken by
+                {{ drive_request.driver.user.name }}
                 <span><img src="{{ drive_request.driver.user.avatar }}" width="24" height="24" /> 
-                <span>{{ drive_request.driver.user.first_name }}</span> <span>{{ drive_request.driver.user.last_name }}</span></p>
+                from {{ drive_request.passenger.origin }} to {{ drive_request.passenger.destination }}</h3>
+        <div>
+            <p>{{ drive_request.driver.id }}</p>
             <p><span><strong>Passenger name:</strong>
-                <span><img src="{{ drive_request.passenger.user.avatar }}" width="24" height="24" /> 
-                <span>{{ drive_request.passenger.user.first_name }}</span> <span>{{ drive_request.passenger.user.last_name }}</span></p>
+                <span>{{ drive_request.passenger.user.first_name }}</span> <span>{{ drive_request.passenger.user.last_name }}</span>
+                </span></p>
+            <p><span><strong>Driver name:</strong>
+                <span>{{ drive_request.driver.user.first_name }}</span> <span>{{ drive_request.driver.user.last_name }}</span>
+                </span></p>
             <p><span><strong>Origin:</strong> <span>{{ drive_request.passenger.origin }}</span></p>
             <p><span><strong>Destination:</strong> <span>{{ drive_request.passenger.destination }}</span></p>
             <p><span><strong>Seats:</strong> <span>{{ drive_request.passenger.seats }}</span></p>
