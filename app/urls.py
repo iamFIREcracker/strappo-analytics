@@ -8,6 +8,8 @@ from app.controllers.feedbacks import ListFeedbacksController
 from app.controllers.passengers import ListPassengerDestinationsController
 from app.controllers.passengers import ListPassengerOriginsController
 from app.controllers.passengers import ListPassengersController
+from app.controllers.drive_requests \
+    import ListCompletedDriveRequestsController
 from app.controllers.perks import ActivateDriverPerkController
 from app.controllers.perks import ListPerksController
 from app.controllers.perks import ViewDriverEarlyBirdController
@@ -39,4 +41,6 @@ URLS = (
     '/users', ListUsersController,
     '/users/send_message', SendMessageToUserController,
     '/users/versions', ListUserVersionsController,
+
+    '/egg', ListCompletedDriveRequestsController,
 )

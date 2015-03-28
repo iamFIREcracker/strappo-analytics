@@ -24,11 +24,13 @@ web.config.TITANIUM_PASSWORD = config.TITANIUM_PASSWORD
 web.config.TITANIUM_NOTIFICATION_CHANNEL = config.TITANIUM_NOTIFICATION_CHANNEL
 
 web.config.SECRET = config.SECRET
+web.config.EGGSECRET = config.EGGSECRET
 
 
 def app_factory():
     """App factory."""
     import weblib.db
+    import weblib.logging
     from weblib.app_processors import load_logger
     from weblib.app_processors import load_path_url
     from weblib.app_processors import load_render
@@ -38,8 +40,9 @@ def app_factory():
 
     views = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'views')
     app = web.application(URLS, globals())
+    logger = weblib.logging.create_logger()
 
-    app.add_processor(web.loadhook(load_logger))
+    app.add_processor(web.loadhook(load_logger(logger)))
     app.add_processor(web.loadhook(load_path_url))
     app.add_processor(web.loadhook(load_render(views)))
     app.add_processor(load_and_manage_orm(weblib.db.create_session()))
