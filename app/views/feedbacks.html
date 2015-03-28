@@ -18,6 +18,7 @@
     <h3><span><img src="{{ feedback.feedback.user.avatar }}" width="24" height="24" /></span> {{ feedback.feedback.user.name }}</h3>
     <div>
         <p><span><strong>Message:</strong> <span>{{ feedback.feedback.message }}</span></p>
+        <p><span><strong>Created:</strong> <span>{{ feedback.feedback.created_day }}</span></p>
         <a href="/traces?user_id={{ feedback.feedback.user.id }}" data-ajax="false">Traces</a>
     </div>
 </div>
