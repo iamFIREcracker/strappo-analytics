@@ -81,6 +81,7 @@ class SendMessageToUserController():
                                  'channel': channel,
                                  'slot': 'global',
                                  'sound': 'default',
+                                 'vibrate': True,
                                  'icon': 'notificationicon',
                                  'alert': params.alert,
                                  'm_title': params.m_title,
