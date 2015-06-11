@@ -14,6 +14,7 @@ from app.controllers.perks import ActivateDriverPerkController
 from app.controllers.perks import ListPerksController
 from app.controllers.perks import ViewDriverEarlyBirdController
 from app.controllers.traces import ListTracesController
+from app.controllers.users import ListUserRegionsController
 from app.controllers.users import ListUserVersionsController
 from app.controllers.users import SendMessageToUserController
 from app.controllers.users import ListUsersController
@@ -40,6 +41,7 @@ URLS = (
 
     '/users', ListUsersController,
     '/users/send_message', SendMessageToUserController,
+    '/users/regions', ListUserRegionsController,
     '/users/versions', ListUserVersionsController,
 
     '/egg', ListCompletedDriveRequestsController,
