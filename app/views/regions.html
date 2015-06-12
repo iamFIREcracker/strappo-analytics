@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css"></link>
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+</head>
+<body>
+<h1>Regions</h1>
+{% for group in groups %}
+<div data-role="collapsible">
+    <h3></span>{{ group.region }} {{ group.users | length }}</h3>
+    {% for user in group.users %}
+    <div data-role="collapsible">
+        <h4><span><img src="{{ user.user.avatar }}" width="24" height="24" /> </span>{{ user.user.name }}</h4>
+        <div>
+            <p><span><strong>Last active:</strong></span> <span>{{ user.last_active }}</span></p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
+</body>
+</html>
