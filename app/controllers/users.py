@@ -15,6 +15,7 @@ from app.workflows.users import ListUsersWorkflow
 from app.workflows.users import ListUserRegionsWorkflow
 from app.workflows.users import ListUserVersionsWorkflow
 from app.workflows.users import SendMessageToUserWorkflow
+from app.workflows.users import SendBroadcastMessageWorkflow
 
 
 class ListUsersController():
@@ -93,6 +94,43 @@ class SendMessageToUserController():
         send_message.perform(web.ctx.logger,
                              UsersRepository,
                              params.user_id,
+                             TitaniumPushNotificationsAdapter(),
+                             channel,
+                             json.dumps({
+                                 'channel': channel,
+                                 'slot': 'global',
+                                 'sound': 'default',
+                                 'vibrate': True,
+                                 'icon': 'notificationicon',
+                                 'alert': params.alert,
+                                 'm_title': params.m_title,
+                                 'm_text': params.m_text
+                             }))
+        return ret.get()
+
+
+class SendBroadcastMessageController():
+    @authorized
+    def POST(self):
+        logger = LoggingSubscriber(web.ctx.logger)
+        send_message = SendBroadcastMessageWorkflow()
+        params = web.input(alert='', m_title='', m_text='', back='/')
+        channel = web.config.TITANIUM_NOTIFICATION_CHANNEL
+        ret = Future()
+
+        class SendMessageToUserSubscriber(object):
+            def user_not_found(self, user_id):
+                raise web.notfound
+
+            def failure(self, error):
+                raise ValueError(error)
+
+            def success(self):
+                raise web.seeother(params.back)
+
+        send_message.add_subscriber(logger, SendMessageToUserSubscriber())
+        send_message.perform(web.ctx.logger,
+                             UsersRepository,
                              TitaniumPushNotificationsAdapter(),
                              channel,
                              json.dumps({
