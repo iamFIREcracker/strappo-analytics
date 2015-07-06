@@ -60,4 +60,4 @@ def _all_acs_ids(limit, offset):
 
 
 def all_acs_ids(limit, offset):
-    return [r for r in _all_acs_ids(limit, offset)]
+    return [r[0] for r in _all_acs_ids(limit, offset)]
