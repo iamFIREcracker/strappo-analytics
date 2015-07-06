@@ -136,11 +136,8 @@ class SendBroadcastMessageWorkflow(Publisher):
         user_ids_future = Future()
 
         class UsersGetterSubscriber(object):
-            def user_not_found(self, user_id):
-                outer.publish('user_not_found', user_id)
-
-            def user_found(self, user):
-                acs_ids_extractor.perform([user])
+            def users_found(self, users):
+                acs_ids_extractor.perform(users)
 
         class ACSUserIdsExtractorSubscriber(object):
             def acs_user_ids_extracted(self, user_ids):

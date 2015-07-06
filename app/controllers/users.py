@@ -119,9 +119,6 @@ class SendBroadcastMessageController():
         ret = Future()
 
         class SendMessageToUserSubscriber(object):
-            def user_not_found(self, user_id):
-                raise web.notfound
-
             def failure(self, error):
                 raise ValueError(error)
 
