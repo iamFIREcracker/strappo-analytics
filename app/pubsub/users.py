@@ -44,3 +44,9 @@ class ByRegionUsersGrouper(Publisher):
                       for (k, g) in groupby(sorted(users,
                                                    key=region),
                                             key=region)])
+
+
+class AllACSIdsGetter(Publisher):
+    def perform(self, users_repository, limit, offset):
+        self.publish('acs_ids_found',
+                     users_repository.all_acs_ids(limit, offset))

@@ -23,6 +23,10 @@ class UsersRepository(BaseUsersRepository):
     def all(limit, offset):
         return all(limit, offset)
 
+    @staticmethod
+    def all_acs_ids(limit, offset):
+        return all_acs_ids(limit, offset)
+
 
 def _all(limit, offset):
     return (Base.session.query(User,
@@ -45,3 +49,15 @@ def _all(limit, offset):
 def all(limit, offset):
     return [UserEnriched(expunged(r[0], User.session), r[1], r[2], r[3])
             for r in _all(limit, offset)]
+
+
+def _all_acs_ids(limit, offset):
+    return (Base.session.query(User.acs_id).
+            select_from(User).
+            filter(User.deleted == false()).
+            limit(limit).
+            offset(offset))
+
+
+def all_acs_ids(limit, offset):
+    return [r for r in _all_acs_ids(limit, offset)]

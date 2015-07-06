@@ -9,6 +9,7 @@ from weblib.pubsub import LoggingSubscriber
 from weblib.pubsub import Publisher
 from weblib.pubsub import Future
 
+from app.pubsub.users import AllACSIdsGetter
 from app.pubsub.users import UsersGetter
 from app.pubsub.users import ByRegionUsersGrouper
 from app.pubsub.users import ByAppVersionUsersGrouper
@@ -129,19 +130,14 @@ class SendBroadcastMessageWorkflow(Publisher):
                 channel, payload):
         outer = self  # Handy to access ``self`` from inner classes
         logger = LoggingSubscriber(logger)
-        users_getter = UsersGetter()
-        acs_ids_extractor = UsersACSUserIdExtractor()
+        acs_ids_getter = AllACSIdsGetter()
         acs_session_creator = ACSSessionCreator()
         acs_notifier = ACSUserIdsNotifier()
-        user_ids_future = Future()
+        acs_ids_future = Future()
 
-        class UsersGetterSubscriber(object):
-            def users_found(self, users):
-                acs_ids_extractor.perform(users)
-
-        class ACSUserIdsExtractorSubscriber(object):
-            def acs_user_ids_extracted(self, user_ids):
-                user_ids_future.set(user_ids)
+        class ACSIdsGetterSubscriber(object):
+            def acs_ids_found(self, acs_ids):
+                acs_ids_future.set(acs_ids)
                 acs_session_creator.perform(push_adapter)
 
         class ACSSessionCreatorSubscriber(object):
@@ -150,7 +146,7 @@ class SendBroadcastMessageWorkflow(Publisher):
 
             def acs_session_created(self, session_id):
                 acs_notifier.perform(push_adapter, session_id, channel,
-                                     user_ids_future.get(), payload)
+                                     acs_ids_future.get(), payload)
 
         class ACSNotifierSubscriber(object):
             def acs_user_ids_not_notified(self, error):
@@ -159,10 +155,8 @@ class SendBroadcastMessageWorkflow(Publisher):
             def acs_user_ids_notified(self):
                 outer.publish('success')
 
-        users_getter.add_subscriber(logger, UsersGetterSubscriber())
-        acs_ids_extractor.add_subscriber(logger,
-                                         ACSUserIdsExtractorSubscriber())
+        acs_ids_getter.add_subscriber(logger, ACSIdsGetterSubscriber())
         acs_session_creator.add_subscriber(logger,
                                            ACSSessionCreatorSubscriber())
         acs_notifier.add_subscriber(logger, ACSNotifierSubscriber())
-        users_getter.perform(users_repository, 1000000, 0)
+        acs_ids_getter.perform(users_repository, 1000000, 0)
