@@ -17,6 +17,11 @@ class UsersGetter(Publisher):
         self.publish('users_found', repository.all(limit, offset))
 
 
+class UsersWithCreditsGetter(Publisher):
+    def perform(self, repository):
+        self.publish('users_found', repository.all_with_credits())
+
+
 def version(user):
     if user.app_version is None or user.app_version == '':
         return (0, 0, 0)
@@ -44,6 +49,15 @@ class ByRegionUsersGrouper(Publisher):
                       for (k, g) in groupby(sorted(users,
                                                    key=region),
                                             key=region)])
+
+
+def total_balance(user):
+    return user.total_balance
+
+
+class ByBalanceUsersSorter(Publisher):
+    def perform(self, users):
+        self.publish('users_sorted', sorted(users, key=total_balance))
 
 
 class AllACSIdsGetter(Publisher):

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css"></link>
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+</head>
+<body>
+<h1>Credits</h1>
+{% for user in users %}
+<div data-role="collapsible">
+    <h3><span><img src="{{ user.user.avatar }}" width="24" height="24" /> </span>{{ user.user.name }} ({{ user.total_balance }})</h3>
+    <div>
+        <p><span><strong>Profit credits:</strong></span> <span>{{ user.profit_credits }}</span></p>
+        <p><span><strong>Profit bonus credits:</strong></span> <span>{{ user.profit_bonus_credits }}</span></p>
+        <p><span><strong>Loss credits:</strong></span> <span>{{ user.loss_credits }}</span></p>
+        <p><span><strong>Loss bonus credits:</strong></span> <span>{{ user.loss_bonus_credits }}</span></p>
+    </div>
+</div>
+{% endfor %}
+</body>
+</html>

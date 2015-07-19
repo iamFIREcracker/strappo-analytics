@@ -12,6 +12,7 @@ from weblib.pubsub import LoggingSubscriber
 from app.repositories.users import UsersRepository
 from app.request_decorators import authorized
 from app.workflows.users import ListUsersWorkflow
+from app.workflows.users import ListUserCreditsWorkflow
 from app.workflows.users import ListUserRegionsWorkflow
 from app.workflows.users import ListUserVersionsWorkflow
 from app.workflows.users import SendMessageToUserWorkflow
@@ -31,6 +32,22 @@ class ListUsersController():
                                              users=users))
 
         users.add_subscriber(logger, ListUsersSubscriber())
+        users.perform(web.ctx.logger, UsersRepository,
+                      web.input(limit=1000, offset=0))
+        return ret.get()
+
+
+class ListUserCreditsController():
+    def GET(self):
+        logger = LoggingSubscriber(web.ctx.logger)
+        users = ListUserCreditsWorkflow()
+        ret = Future()
+
+        class ListUserCreditsSubscriber(object):
+            def success(self, users):
+                ret.set(web.ctx.render.credits(users=users))
+
+        users.add_subscriber(logger, ListUserCreditsSubscriber())
         users.perform(web.ctx.logger, UsersRepository,
                       web.input(limit=1000, offset=0))
         return ret.get()
