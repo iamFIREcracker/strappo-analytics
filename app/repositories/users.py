@@ -77,10 +77,15 @@ def all_acs_ids(limit, offset):
     return [r[0] for r in _all_acs_ids(limit, offset)]
 
 
+UserWithCredits = namedtuple('UserWithCredits',
+                             'id name profit_credits profit_bonus_credits loss_credits loss_bonus_credits total_balance'.split())
+
+
 def _all_with_credits():
     Profit = aliased(Payment)
     Loss = aliased(Payment)
-    return (Base.session.query(User,
+    return (Base.session.query(User.id,
+                               User.name,
                                func.coalesce(func.sum(Profit.credits),
                                              0.0),
                                func.coalesce(func.sum(Profit.bonus_credits),
@@ -96,15 +101,10 @@ def _all_with_credits():
             group_by(User.id))
 
 
-UserWithCredits = namedtuple('UserWithCredits',
-                             'user profit_credits profit_bonus_credits loss_credits loss_bonus_credits total_balance'.split())
-
-
 def all_with_credits():
     def create(row):
-        total_balance = row[1] + row[2] - (row[3] + row[4])
-        return UserWithCredits(row[0], row[1], row[2], row[3], row[4],
-                               total_balance)
+        total_balance = row[2] + row[3] - (row[4] + row[5])
+        return UserWithCredits(*row + (total_balance,))
     return [create(r) for r in _all_with_credits()]
 
 
