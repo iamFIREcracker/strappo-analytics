@@ -3,6 +3,10 @@
 
 from strappon.pubsub import ACSSessionCreator
 from strappon.pubsub import ACSUserIdsNotifier
+from strappon.pubsub.payments import PaymentForPromoCodeCreator
+from strappon.pubsub.promo_codes import PromoCodeWithNameGetter
+from strappon.pubsub.promo_codes import PromoCodeActivator
+from strappon.pubsub.promo_codes import PromoCodeSerializer
 from strappon.pubsub.users import UserWithIdGetter
 from strappon.pubsub.users import UsersACSUserIdExtractor
 from weblib.pubsub import LoggingSubscriber
@@ -15,6 +19,44 @@ from app.pubsub.users import UsersWithCreditsGetter
 from app.pubsub.users import ByAppVersionUsersGrouper
 from app.pubsub.users import ByBalanceUsersSorter
 from app.pubsub.users import ByRegionUsersGrouper
+
+
+class RefillUserWorkflow(Publisher):
+    def perform(self, orm, logger, user_id, name, promo_codes_repository,
+                payments_repository):
+        outer = self  # Handy to access ``self`` from inner classes
+        logger = LoggingSubscriber(logger)
+        promo_code_getter = PromoCodeWithNameGetter()
+        promo_code_activator = PromoCodeActivator()
+        payment_creator = PaymentForPromoCodeCreator()
+        promo_code_future = Future()
+
+        class PromoCodeGetterSubscriber(object):
+            def promo_code_not_found(self, name):
+                outer.publish('not_found', name)
+
+            def promo_code_found(self, promo_code):
+                promo_code_future.set(promo_code)
+                promo_code_activator.perform(promo_codes_repository,
+                                             user_id, promo_code.id)
+
+        class PromoCodeActivatorSubscriber(object):
+            def user_promo_code_activated(self, user_promo_code):
+                orm.add(user_promo_code)
+                payment_creator.perform(payments_repository,
+                                        user_id, promo_code_future.get())
+
+        class PaymentsCreatorSubscriber(object):
+            def payment_created(self, payment):
+                orm.add(payment)
+                outer.publish('success', payment)
+
+        promo_code_getter.add_subscriber(logger,
+                                         PromoCodeGetterSubscriber())
+        promo_code_activator.add_subscriber(logger,
+                                            PromoCodeActivatorSubscriber())
+        payment_creator.add_subscriber(logger, PaymentsCreatorSubscriber())
+        promo_code_getter.perform(promo_codes_repository, name)
 
 
 class ListUsersWorkflow(Publisher):
@@ -35,7 +77,7 @@ class ListUsersWorkflow(Publisher):
 
 
 class ListUserCreditsWorkflow(Publisher):
-    def perform(self, logger, users_repository, params):
+    def perform(self, logger, users_repository):
         outer = self  # Handy to access ``self`` from inner classes
         logger = LoggingSubscriber(logger)
         users_getter = UsersWithCreditsGetter()

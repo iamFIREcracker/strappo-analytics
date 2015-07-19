@@ -16,6 +16,15 @@
         <p><span><strong>Profit bonus credits:</strong></span> <span>{{ user.profit_bonus_credits }}</span></p>
         <p><span><strong>Loss credits:</strong></span> <span>{{ user.loss_credits }}</span></p>
         <p><span><strong>Loss bonus credits:</strong></span> <span>{{ user.loss_bonus_credits }}</span></p>
+        <div data-role="collapsible">
+            <h4><span><strong>Refill account</strong></span></h4>
+            <form method="post" action="/users/refill" data-ajax="false">
+                <input type="hidden" name="user_id" value="{{ user.user.id }}" />
+                <input type="hidden" name="back" value="{{ back }}" />
+                <input type="text" name="alert" placeholder="Notification message" />
+                <input type="submit" value="Do it!" />
+            </form>
+        </div>
     </div>
 </div>
 {% endfor %}

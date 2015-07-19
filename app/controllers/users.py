@@ -8,6 +8,8 @@ import web
 from weblib.adapters.push.titanium import TitaniumPushNotificationsAdapter
 from weblib.pubsub import Future
 from weblib.pubsub import LoggingSubscriber
+from strappon.repositories.payments import PaymentsRepository
+from strappon.repositories.promo_codes import PromoCodesRepository
 
 from app.repositories.users import UsersRepository
 from app.request_decorators import authorized
@@ -15,6 +17,7 @@ from app.workflows.users import ListUsersWorkflow
 from app.workflows.users import ListUserCreditsWorkflow
 from app.workflows.users import ListUserRegionsWorkflow
 from app.workflows.users import ListUserVersionsWorkflow
+from app.workflows.users import RefillUserWorkflow
 from app.workflows.users import SendMessageToUserWorkflow
 from app.workflows.users import SendBroadcastMessageWorkflow
 
@@ -45,11 +48,11 @@ class ListUserCreditsController():
 
         class ListUserCreditsSubscriber(object):
             def success(self, users):
-                ret.set(web.ctx.render.credits(users=users))
+                ret.set(web.ctx.render.credits(back=web.ctx.path,
+                                               users=users))
 
         users.add_subscriber(logger, ListUserCreditsSubscriber())
-        users.perform(web.ctx.logger, UsersRepository,
-                      web.input(limit=1000, offset=0))
+        users.perform(web.ctx.logger, UsersRepository)
         return ret.get()
 
 
@@ -84,6 +87,54 @@ class ListUserVersionsController():
         users.add_subscriber(logger, ListUserVersionsSubscriber())
         users.perform(web.ctx.logger, UsersRepository,
                       web.input(limit=1000, offset=0))
+        return ret.get()
+
+
+class RefillUserController():
+    def POST(self):
+        logger = LoggingSubscriber(web.ctx.logger)
+        params = web.input(user_id='', alert='')
+        channel = web.config.TITANIUM_NOTIFICATION_CHANNEL
+        refill_user = RefillUserWorkflow()
+        send_message = SendMessageToUserWorkflow()
+        ret = Future()
+
+        class RefillUserSubscriber(object):
+            def not_found(self, name):
+                raise ValueError('Promo not found: ' + name)
+
+            def success(self, payment):
+                web.ctx.orm.commit()
+                send_message.perform(web.ctx.logger,
+                                     UsersRepository,
+                                     params.user_id,
+                                     TitaniumPushNotificationsAdapter(),
+                                     channel,
+                                     json.dumps({
+                                         'channel': channel,
+                                         'slot': 'bonus',
+                                         'sound': 'default',
+                                         'vibrate': True,
+                                         'icon': 'notificationicon',
+                                         'alert': params.alert,
+                                     }))
+
+        class SendMessageToUserSubscriber(object):
+            def user_not_found(self, user_id):
+                raise web.notfound
+
+            def failure(self, error):
+                raise ValueError(error)
+
+            def success(self):
+                raise web.seeother(params.back)
+
+        refill_user.add_subscriber(logger, RefillUserSubscriber())
+        send_message.add_subscriber(logger, SendMessageToUserSubscriber())
+        refill_user.perform(web.ctx.orm, web.ctx.logger,
+                            params.user_id, PromoCodesRepository.NEW_USER,
+                            PromoCodesRepository,
+                            PaymentsRepository)
         return ret.get()
 
 
