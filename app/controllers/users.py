@@ -113,6 +113,7 @@ class RefillUserController():
                                      json.dumps({
                                          'channel': channel,
                                          'slot': 'bonus',
+                                         'credits': payment.bonus_credits,
                                          'sound': 'default',
                                          'vibrate': True,
                                          'icon': 'notificationicon',
