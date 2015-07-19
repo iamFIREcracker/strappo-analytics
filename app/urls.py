@@ -27,9 +27,9 @@ URLS = (
 
     '/', IndexController,
 
-    '/experiments/open_account', ViewOpenAccountExperimentController,
-
     '/drivers', ListDriversController,
+
+    '/experiments/open_account', ViewOpenAccountExperimentController,
 
     '/feedbacks', ListFeedbacksController,
 
