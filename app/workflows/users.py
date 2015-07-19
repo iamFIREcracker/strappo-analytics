@@ -6,7 +6,6 @@ from strappon.pubsub import ACSUserIdsNotifier
 from strappon.pubsub.payments import PaymentForPromoCodeCreator
 from strappon.pubsub.promo_codes import PromoCodeWithNameGetter
 from strappon.pubsub.promo_codes import PromoCodeActivator
-from strappon.pubsub.promo_codes import PromoCodeSerializer
 from strappon.pubsub.users import UserWithIdGetter
 from strappon.pubsub.users import UsersACSUserIdExtractor
 from weblib.pubsub import LoggingSubscriber
@@ -16,6 +15,8 @@ from weblib.pubsub import Future
 from app.pubsub.users import AllACSIdsGetter
 from app.pubsub.users import UsersGetter
 from app.pubsub.users import UsersWithCreditsGetter
+from app.pubsub.users import UsersWithRegionsGetter
+from app.pubsub.users import UsersWithVersionsGetter
 from app.pubsub.users import ByAppVersionUsersGrouper
 from app.pubsub.users import ByBalanceUsersSorter
 from app.pubsub.users import ByRegionUsersGrouper
@@ -100,7 +101,7 @@ class ListUserRegionsWorkflow(Publisher):
     def perform(self, logger, users_repository, params):
         outer = self  # Handy to access ``self`` from inner classes
         logger = LoggingSubscriber(logger)
-        users_getter = UsersGetter()
+        users_getter = UsersWithRegionsGetter()
         users_grouper = ByRegionUsersGrouper()
 
         class UsersGetterSubscriber(object):
@@ -113,17 +114,14 @@ class ListUserRegionsWorkflow(Publisher):
 
         users_getter.add_subscriber(logger, UsersGetterSubscriber())
         users_grouper.add_subscriber(logger, UsersGrouperSubscriber())
-        users_getter.\
-            perform(users_repository,
-                    int(params.limit) if params.limit != '' else 1000,
-                    int(params.offset) if params.offset != '' else 0)
+        users_getter.perform(users_repository)
 
 
 class ListUserVersionsWorkflow(Publisher):
-    def perform(self, logger, users_repository, params):
+    def perform(self, logger, users_repository):
         outer = self  # Handy to access ``self`` from inner classes
         logger = LoggingSubscriber(logger)
-        users_getter = UsersGetter()
+        users_getter = UsersWithVersionsGetter()
         users_grouper = ByAppVersionUsersGrouper()
 
         class UsersGetterSubscriber(object):
@@ -136,10 +134,7 @@ class ListUserVersionsWorkflow(Publisher):
 
         users_getter.add_subscriber(logger, UsersGetterSubscriber())
         users_grouper.add_subscriber(logger, UsersGrouperSubscriber())
-        users_getter.\
-            perform(users_repository,
-                    int(params.limit) if params.limit != '' else 1000,
-                    int(params.offset) if params.offset != '' else 0)
+        users_getter.perform(users_repository)
 
 
 class SendMessageToUserWorkflow(Publisher):

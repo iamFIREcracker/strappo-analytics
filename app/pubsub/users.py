@@ -22,6 +22,16 @@ class UsersWithCreditsGetter(Publisher):
         self.publish('users_found', repository.all_with_credits())
 
 
+class UsersWithRegionsGetter(Publisher):
+    def perform(self, repository):
+        self.publish('users_found', repository.all_with_regions())
+
+
+class UsersWithVersionsGetter(Publisher):
+    def perform(self, repository):
+        self.publish('users_found', repository.all_with_versions())
+
+
 def version(user):
     if user.app_version is None or user.app_version == '':
         return (0, 0, 0)

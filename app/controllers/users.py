@@ -85,8 +85,7 @@ class ListUserVersionsController():
                 ret.set(web.ctx.render.versions(groups=users))
 
         users.add_subscriber(logger, ListUserVersionsSubscriber())
-        users.perform(web.ctx.logger, UsersRepository,
-                      web.input(limit=1000, offset=0))
+        users.perform(web.ctx.logger, UsersRepository)
         return ret.get()
 
 

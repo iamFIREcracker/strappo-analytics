@@ -19,9 +19,6 @@ from weblib.db import expunged
 UserEnriched = namedtuple('UserEnriched',
                           'user app_version last_active region'.split())
 
-UserWithCredits = namedtuple('UserWithCredits',
-                             'user profit_credits profit_bonus_credits loss_credits loss_bonus_credits total_balance'.split())
-
 
 class UsersRepository(BaseUsersRepository):
     @staticmethod
@@ -35,6 +32,14 @@ class UsersRepository(BaseUsersRepository):
     @staticmethod
     def all_with_credits():
         return all_with_credits()
+
+    @staticmethod
+    def all_with_regions():
+        return all_with_regions()
+
+    @staticmethod
+    def all_with_versions():
+        return all_with_versions()
 
 
 def _all(limit, offset):
@@ -91,9 +96,52 @@ def _all_with_credits():
             group_by(User.id))
 
 
+UserWithCredits = namedtuple('UserWithCredits',
+                             'user profit_credits profit_bonus_credits loss_credits loss_bonus_credits total_balance'.split())
+
+
 def all_with_credits():
     def create(row):
         total_balance = row[1] + row[2] - (row[3] + row[4])
         return UserWithCredits(row[0], row[1], row[2], row[3], row[4],
                                total_balance)
     return [create(r) for r in _all_with_credits()]
+
+
+UserWithRegion = namedtuple('UserWithRegion',
+                            'name region'.split())
+
+
+def _all_with_regions():
+    return (Base.session.query(User.name,
+                               UserPosition.region).
+            outerjoin('position').
+            filter(User.deleted == false()).
+            filter(or_(UserPosition.archived.is_(None),
+                       UserPosition.archived == false())))
+
+
+def all_with_regions():
+    def create(row):
+        return UserWithRegion(*row)
+    return [create(r) for r in _all_with_regions()]
+
+
+UserWithVersion = namedtuple('UserWithVersion',
+                             'name app_version'.split())
+
+
+def _all_with_versions():
+    return (Base.session.query(User.name,
+                               Trace.app_version).
+            join('traces').
+            filter(User.deleted == false()).
+            group_by(User.id).
+            having(Trace.date == func.max(Trace.date)).
+            order_by(Trace.date.desc()))
+
+
+def all_with_versions():
+    def create(row):
+        return UserWithVersion(*row)
+    return [create(r) for r in _all_with_versions()]
