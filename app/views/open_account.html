@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css"></link>
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+</head>
+<body>
+<h1>Open Account</h1>
+{% for group in groups %}
+<div data-role="collapsible">
+    <h3></span>{{ group.app_version }} ({{ group.total }} clicks)</h3>
+    <div>
+        <p><span><strong>Nav:</strong></span> <span>{{ group.nav }}</span></p>
+        <p><span><strong>Avatar:</strong></span> <span>{{ group.avatar }}</span></p>
+        <p><span><strong>Stars:</strong></span> <span>{{ group.stars }}</span></p>
+        <p><span><strong>Balance:</strong></span> <span>{{ group.balance }}</span></p>
+    </div>
+</div>
+{% endfor %}
+</body>
+</html>

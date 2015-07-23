@@ -12,6 +12,14 @@
     <input type="text" name="offset" placeholder="Offset" />
     <input type="submit" value="Submit" />
 </form>
+<h4><span><strong>Broadcast</strong></span></h4>
+<form method="post" action="/users/send_message/broadcast" data-ajax="false">
+    <input type="hidden" name="back" value="{{ back }}" />
+    <input type="text" name="alert" placeholder="Alert" />
+    <input type="text" name="m_title" placeholder="Message Title" />
+    <input type="text" name="m_text" placeholder="Message text" />
+    <input type="submit" value="Send message" />
+</form>
 <h1>Users ({{ users | length }})</h1>
 {% for user in users %}
 <div data-role="collapsible">
